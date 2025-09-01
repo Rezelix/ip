@@ -1,8 +1,10 @@
-import java.io.Serial;
 import java.util.Scanner;
 public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
+    static final int MAX_NUM_OF_TASKS = 100;
+    static public String[] tasks =  new String[MAX_NUM_OF_TASKS];
+
     public static void main(String[] args) {
         String logo = "  _____ _            _     \n" +
                 " / ____| |          (_)    \n" +
@@ -12,28 +14,43 @@ public class Clovis {
                 " \\_____|_|\\___/ \\_/ |_|___/";
         System.out.println("Hello from\n" + logo);
         System.out.println("What do you want from me this time?");
-        System.out.print(DIVIDER);
+        divider();
+        int taskIndex = 0;
         while (true) {
             Scanner inputComm = new Scanner(System.in);
             String line = inputComm.nextLine();
             switch (line) {
             case "list":
-                System.out.print(DIVIDER);
-                System.out.println("list");
-                System.out.print(DIVIDER);
+                divider();
+                printTasks(tasks);
+                divider();
                 break;
             case "bye":
-                System.out.print(DIVIDER);
+                divider();
                 System.out.println("Bye. Don't come again!");
-                System.out.print(DIVIDER);
+                divider();
+                taskIndex = 0;
                 System.exit(0);
                 break;
             default:
-                System.out.print(DIVIDER);
-                System.out.println(line);
-                System.out.print(DIVIDER);
+                tasks[taskIndex] = line;
+                taskIndex += 1;
+                divider();
+                System.out.println("added: " + line);
+                divider();
                 break;
             }
         }
     }
+
+    public static void printTasks(String[] tasks) {
+        for (int i = 0; tasks[i] != null ; i++) {
+            System.out.println(i + ". " + tasks[i]);
+        }
+    }
+    
+    public static void divider() {
+        System.out.print(DIVIDER);
+    }
+
 }
