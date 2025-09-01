@@ -12,7 +12,7 @@ public class Task {
         this.name = name;
     }
 
-    public void setDone(boolean done) {
+    public void setDone() {
         this.done = true;
     }
     public void resetDone() {

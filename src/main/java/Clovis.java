@@ -3,7 +3,7 @@ public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
     static final int MAX_NUM_OF_TASKS = 100;
-    static public String[] tasks =  new String[MAX_NUM_OF_TASKS];
+    public static Task[] tasks =  new Task[MAX_NUM_OF_TASKS];
 
     public static void main(String[] args) {
         String logo = "  _____ _            _     \n" +
@@ -19,33 +19,29 @@ public class Clovis {
         while (true) {
             Scanner inputComm = new Scanner(System.in);
             String line = inputComm.nextLine();
+            divider();
             switch (line) {
             case "list":
-                divider();
                 printTasks(tasks);
-                divider();
                 break;
             case "bye":
-                divider();
                 System.out.println("Bye. Don't come again!");
-                divider();
                 taskIndex = 0;
                 System.exit(0);
                 break;
             default:
-                tasks[taskIndex] = line;
+                tasks[taskIndex] = new Task(line);
                 taskIndex += 1;
-                divider();
                 System.out.println("added: " + line);
-                divider();
                 break;
             }
+            divider();
         }
     }
 
-    public static void printTasks(String[] tasks) {
+    public static void printTasks(Task[] tasks) {
         for (int i = 0; tasks[i] != null ; i++) {
-            System.out.println(i + ". " + tasks[i]);
+            System.out.println(i + ". " + tasks[i].getName());
         }
     }
     
