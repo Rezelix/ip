@@ -19,8 +19,10 @@ public class Clovis {
         while (true) {
             Scanner inputComm = new Scanner(System.in);
             String line = inputComm.nextLine();
+            String[] words = line.split(" ");
+            String cmdWord = words[0];
             divider();
-            switch (line) {
+            switch (cmdWord) {
             case "list":
                 printTasks(tasks);
                 break;
@@ -29,6 +31,15 @@ public class Clovis {
                 taskIndex = 0;
                 System.exit(0);
                 break;
+            case "mark":
+                int taskNumMark = Integer.parseInt(words[1]);
+                tasks[taskNumMark].setDone();
+                break;
+            case "unmark":
+                int taskNumUnmark = Integer.parseInt(words[1]);
+                tasks[taskNumUnmark].resetDone();
+                break;
+
             default:
                 tasks[taskIndex] = new Task(line);
                 taskIndex += 1;
@@ -41,7 +52,7 @@ public class Clovis {
 
     public static void printTasks(Task[] tasks) {
         for (int i = 0; tasks[i] != null ; i++) {
-            System.out.println(i + ". " + tasks[i].getName());
+            System.out.println(i+1 + "." + (tasks[i].isDone() ? "[X] " : "[] ") + tasks[i].getName());
         }
     }
     
