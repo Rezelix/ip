@@ -14,14 +14,14 @@ public class Clovis {
                 " \\_____|_|\\___/ \\_/ |_|___/";
         System.out.println("Hello from\n" + logo);
         System.out.println("What do you want from me this time?");
-        divider();
+        printDivider();
         int taskIndex = 0;
         while (true) {
             Scanner inputComm = new Scanner(System.in);
             String line = inputComm.nextLine();
             String[] words = line.split(" ");
             String cmdWord = words[0];
-            divider();
+            printDivider();
             switch (cmdWord) {
             case "list":
                 printTasks(tasks);
@@ -39,14 +39,13 @@ public class Clovis {
                 int taskNumUnmark = Integer.parseInt(words[1]);
                 tasks[taskNumUnmark].resetDone();
                 break;
-
             default:
                 tasks[taskIndex] = new Task(line);
                 taskIndex += 1;
                 System.out.println("added: " + line);
                 break;
             }
-            divider();
+            printDivider();
         }
     }
 
@@ -56,7 +55,7 @@ public class Clovis {
         }
     }
     
-    public static void divider() {
+    public static void printDivider() {
         System.out.print(DIVIDER);
     }
 
