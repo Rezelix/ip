@@ -1,6 +1,7 @@
 public class Task {
     private String name;
-    private boolean done;
+    private boolean isDone;
+    private String type;
 
     public Task(String name) {
         this.name = name;
@@ -11,15 +12,23 @@ public class Task {
     public void setName(String name) {
         this.name = name;
     }
-
+    public String getTypeAbbrev() {
+        return this.type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
     public void setDone() {
-        this.done = true;
+        this.isDone = true;
     }
     public void resetDone() {
-        this.done = false;
+        this.isDone = false;
     }
     public boolean isDone() {
-        return done;
+        return this.isDone;
+    }
+    public String getStatus() {
+        return "[" + this.getTypeAbbrev() + "][" + (this.isDone() ? "X" : "") + "] ";
     }
 
 }

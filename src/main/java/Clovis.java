@@ -17,12 +17,12 @@ public class Clovis {
         printDivider();
         int taskIndex = 0;
         while (true) {
-            Scanner inputComm = new Scanner(System.in);
-            String line = inputComm.nextLine();
+            Scanner input = new Scanner(System.in);
+            String line = input.nextLine();
             String[] words = line.split(" ");
-            String cmdWord = words[0];
+            String cmdType = words[0];
             printDivider();
-            switch (cmdWord) {
+            switch (cmdType) {
             case "list":
                 printTasks(tasks);
                 break;
@@ -33,11 +33,25 @@ public class Clovis {
                 break;
             case "mark":
                 int taskNumMark = Integer.parseInt(words[1]);
-                tasks[taskNumMark].setDone();
+                tasks[taskNumMark - 1].setDone();
                 break;
             case "unmark":
                 int taskNumUnmark = Integer.parseInt(words[1]);
                 tasks[taskNumUnmark].resetDone();
+                break;
+            case "deadline":
+                int dateIndex;
+                for (dateIndex = 0; dateIndex < words.length; dateIndex += 1) {
+                    if (words[dateIndex].startsWith("/by")) {
+                        break;
+                    }
+                }
+                if (dateIndex == words.length) {
+                    System.out.println("No deadline found! Insert another Task!");
+                    break;
+                }
+                tasks[taskIndex] = new Deadline(line.substring(9,line.indexOf("/")), words[dateIndex+1]);
+                taskIndex += 1;
                 break;
             default:
                 tasks[taskIndex] = new Task(line);
@@ -50,8 +64,11 @@ public class Clovis {
     }
 
     public static void printTasks(Task[] tasks) {
+//        for (int i = 0; tasks[i] != null ; i++) {
+//            System.out.println(i+1 + "." + (tasks[i].isDone() ? "[X] " : "[] ") + tasks[i].getName());
+//        }
         for (int i = 0; tasks[i] != null ; i++) {
-            System.out.println(i+1 + "." + (tasks[i].isDone() ? "[X] " : "[] ") + tasks[i].getName());
+            System.out.println(i+1 + "." + tasks[i].toString());
         }
     }
     
