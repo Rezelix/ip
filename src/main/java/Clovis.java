@@ -3,6 +3,8 @@ public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
     static final int MAX_NUM_OF_TASKS = 100;
+    static final int CHARNUM_OF_DATELINE = 8;
+
     public static Task[] tasks =  new Task[MAX_NUM_OF_TASKS];
 
     public static void main(String[] args) {
@@ -46,17 +48,19 @@ public class Clovis {
                         break;
                     }
                 }
-                if (dateIndex == words.length) {
+                if (dateIndex == words.length - 1 ) {
                     System.out.println("No deadline found! Insert another Task!");
                     break;
                 }
-                tasks[taskIndex] = new Deadline(line.substring(9,line.indexOf("/")), words[dateIndex+1]);
+                String subStrTask = line.substring(CHARNUM_OF_DATELINE,line.indexOf(" /by"));
+                String subStrDeadline = line.substring(line.indexOf("/by") + 4);
+                tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
+                printAck(line);
+                printTotalInList(taskIndex+1);
                 taskIndex += 1;
                 break;
             default:
-                tasks[taskIndex] = new Task(line);
-                taskIndex += 1;
-                System.out.println("added: " + line);
+                System.out.println("Don't give me nonsense! Re-enter!");
                 break;
             }
             printDivider();
@@ -74,6 +78,14 @@ public class Clovis {
     
     public static void printDivider() {
         System.out.print(DIVIDER);
+    }
+
+    public static void printAck(String line) {
+        System.out.println("added: " + line);
+    }
+
+    public static void printTotalInList(int numOfTasks) {
+        System.out.println("You currently have " + numOfTasks + " tasks in your list");
     }
 
 }

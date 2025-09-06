@@ -13,6 +13,6 @@ public class Deadline extends Task{
 
     @Override
     public String toString() {
-        return super.getStatus() + super.getName() + "(by: " + this.getDateTimeDeadline() + ")";
+        return super.getStatus() + super.getName() + " (by: " + this.getDateTimeDeadline() + ")";
     }
 }
