@@ -5,6 +5,7 @@ public class Task {
 
     public Task(String name) {
         this.name = name;
+        this.isDone = false;
     }
     public String getName() {
         return name;
@@ -32,6 +33,9 @@ public class Task {
     }
     public String getStatus() {
         return "[" + this.getTypeAbbrev() + "][" + this.isDoneMark() + "] ";
+    }
+    public String toString() {
+        return "This task's class does not have an overridden toString()";
     }
 
 }

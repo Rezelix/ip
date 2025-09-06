@@ -4,6 +4,7 @@ public class Clovis {
     static final String DIVIDER = "__________________________________________________________\n";
     static final int MAX_NUM_OF_TASKS = 100;
     static final int CHARNUM_OF_DATELINE = 8;
+    static final int CHARNUM_OF_TODO = 4;
 
     public static Task[] tasks =  new Task[MAX_NUM_OF_TASKS];
 
@@ -55,6 +56,12 @@ public class Clovis {
                 String subStrTask = line.substring(CHARNUM_OF_DATELINE,line.indexOf(" /by"));
                 String subStrDeadline = line.substring(line.indexOf("/by") + 4);
                 tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
+                printAck(line);
+                printTotalInList(taskIndex+1);
+                taskIndex += 1;
+                break;
+            case "todo":
+                tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO));
                 printAck(line);
                 printTotalInList(taskIndex+1);
                 taskIndex += 1;
