@@ -5,6 +5,7 @@ public class Clovis {
     static final int MAX_NUM_OF_TASKS = 100;
     static final int CHARNUM_OF_DATELINE = 8;
     static final int CHARNUM_OF_TODO = 4;
+    static final int CHARNUM_OF_EVENT = 5;
 
     public static Task[] tasks =  new Task[MAX_NUM_OF_TASKS];
 
@@ -23,6 +24,7 @@ public class Clovis {
             Scanner input = new Scanner(System.in);
             String line = input.nextLine();
             String[] words = line.split(" ");
+            words = trimWords(words);
             String cmdType = words[0];
             printDivider();
             switch (cmdType) {
@@ -36,11 +38,12 @@ public class Clovis {
                 break;
             case "mark":
                 int taskNumMark = Integer.parseInt(words[1]);
+                // cases 0, number not spanning the total number of tasks
                 tasks[taskNumMark - 1].setDone();
                 break;
             case "unmark":
                 int taskNumUnmark = Integer.parseInt(words[1]);
-                tasks[taskNumUnmark].resetDone();
+                tasks[taskNumUnmark - 1].resetDone();
                 break;
             case "deadline":
                 int dateIndex;
@@ -56,13 +59,22 @@ public class Clovis {
                 String subStrTask = line.substring(CHARNUM_OF_DATELINE,line.indexOf(" /by"));
                 String subStrDeadline = line.substring(line.indexOf("/by") + 4);
                 tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
-                printAck(line);
+                printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex+1);
                 taskIndex += 1;
                 break;
             case "todo":
                 tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO));
-                printAck(line);
+                printAck(tasks[taskIndex].toString());
+                printTotalInList(taskIndex+1);
+                taskIndex += 1;
+                break;
+            case "event":
+                String subStrEvent = line.substring(CHARNUM_OF_EVENT,line.indexOf(" /from"));
+                String subStrFrom = line.substring(line.indexOf("/from")+6, line.indexOf(" /to"));
+                String subStrTo = line.substring(line.indexOf("/to")+4);
+                tasks[taskIndex] = new Event(subStrEvent,subStrFrom,subStrTo);
+                printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex+1);
                 taskIndex += 1;
                 break;
@@ -75,9 +87,6 @@ public class Clovis {
     }
 
     public static void printTasks(Task[] tasks) {
-//        for (int i = 0; tasks[i] != null ; i++) {
-//            System.out.println(i+1 + "." + (tasks[i].isDone() ? "[X] " : "[] ") + tasks[i].getName());
-//        }
         for (int i = 0; tasks[i] != null ; i++) {
             System.out.println(i+1 + "." + tasks[i].toString());
         }
@@ -93,6 +102,14 @@ public class Clovis {
 
     public static void printTotalInList(int numOfTasks) {
         System.out.println("You currently have " + numOfTasks + " tasks in your list");
+    }
+
+    public static String[] trimWords (String[] words) {
+        String[] output = new String[words.length];
+        for (int i = 0; i < words.length; i++) {
+            output[i] = words[i].trim();
+        }
+        return output;
     }
 
 }

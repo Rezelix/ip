@@ -1,9 +1,9 @@
 public class Deadline extends Task{
-    private String dateTimeDeadline;
+    protected String dateTimeDeadline;
 
     public Deadline(String description, String dateTimeDeadline){
         super(description);
-        super.setType("D");
+        this.setType("D");
         this.dateTimeDeadline = dateTimeDeadline;
     }
 
