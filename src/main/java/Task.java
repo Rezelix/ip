@@ -29,7 +29,7 @@ public class Task {
         return this.isDone;
     }
     public String isDoneMark() {
-        return this.isDone() ? "X" : "";
+        return this.isDone() ? "X" : " ";
     }
     public String getStatus() {
         return "[" + this.getTypeAbbrev() + "][" + this.isDoneMark() + "] ";

@@ -38,11 +38,12 @@ public class Clovis {
                 break;
             case "mark":
                 int taskNumMark = Integer.parseInt(words[1]);
-                // cases 0, number not spanning the total number of tasks
+                // TODO Error Handling - cases for 0 and a number not spanning the total number of tasks
                 tasks[taskNumMark - 1].setDone();
                 break;
             case "unmark":
                 int taskNumUnmark = Integer.parseInt(words[1]);
+                // TODO Error Handling - cases for 0 and a number not spanning the total number of tasks
                 tasks[taskNumUnmark - 1].resetDone();
                 break;
             case "deadline":
@@ -56,7 +57,7 @@ public class Clovis {
                     System.out.println("No deadline found! Insert another Task!");
                     break;
                 }
-                String subStrTask = line.substring(CHARNUM_OF_DATELINE,line.indexOf(" /by"));
+                String subStrTask = line.substring(CHARNUM_OF_DATELINE+1,line.indexOf(" /by"));
                 String subStrDeadline = line.substring(line.indexOf("/by") + 4);
                 tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
                 printAck(tasks[taskIndex].toString());
@@ -64,15 +65,23 @@ public class Clovis {
                 taskIndex += 1;
                 break;
             case "todo":
-                tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO));
+                tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO+1));
                 printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex+1);
                 taskIndex += 1;
                 break;
             case "event":
-                String subStrEvent = line.substring(CHARNUM_OF_EVENT,line.indexOf(" /from"));
-                String subStrFrom = line.substring(line.indexOf("/from")+6, line.indexOf(" /to"));
-                String subStrTo = line.substring(line.indexOf("/to")+4);
+                int fromIndex = findParamIndex(words,"/from");
+                int toIndex = findParamIndex(words,"/to");
+                String subStrEvent = assembleStringFromArrayIndexes(words,1,fromIndex);
+//                for (String word : words) {
+//                    System.out.println(word);
+//                }
+                String subStrFrom = assembleStringFromArrayIndexes(words,fromIndex + 1,toIndex);
+                String subStrTo = assembleStringFromArrayIndexes(words,toIndex + 1);
+//                String subStrEvent = line.substring(CHARNUM_OF_EVENT,line.indexOf(" /from"));
+//                String subStrFrom = line.substring(line.indexOf("/from")+6, line.indexOf(" /to"));
+//                String subStrTo = line.substring(line.indexOf("/to")+4);
                 tasks[taskIndex] = new Event(subStrEvent,subStrFrom,subStrTo);
                 printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex+1);
@@ -109,6 +118,34 @@ public class Clovis {
         for (int i = 0; i < words.length; i++) {
             output[i] = words[i].trim();
         }
+        return output;
+    }
+
+    public static int findParamIndex (String[] array, String keyword) {
+        for (int i = 1; i < array.length; i++) {
+            if  (array[i].equals(keyword)) {
+                return i;
+            }
+        }
+        return -1; //TODO error handling - Param not found
+    }
+
+    public static String assembleStringFromArrayIndexes (String[] array, int startIndex, int endIndex) {
+        String output = "";
+        for (int i = startIndex; i < endIndex; i++) {
+            output += array[i] + " ";
+//            output = output.concat(array[i] + " ");
+        }
+        output = output.trim();
+        return output;
+    }
+
+    public static String assembleStringFromArrayIndexes (String[] array, int startIndex) {
+        String output = "";
+        for (int i = startIndex; i < array.length; i++) {
+            output +=  array[i] + " ";
+        }
+        output = output.trim();
         return output;
     }
 
