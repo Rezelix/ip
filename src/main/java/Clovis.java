@@ -36,26 +36,58 @@ public class Clovis {
             case "bye":
                 System.out.println("Bye. Don't come again!");
                 taskIndex = 0;
-//                while (true);
                 System.exit(0);
                 break;
             case "mark":
+                //TODO: Throw and Catch Exception
+                if (words.length == 1) {
+                    System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
+                    break;
+                }
                 int taskNumMark = Integer.parseInt(words[1]);
-                // TODO Error Handling - cases for 0 and a number not spanning the total number of tasks
+                //TODO: Throw and Catch Exception
+                if (taskNumMark == 0 || taskNumMark > taskIndex + 1) {
+                    System.out.println("Invalid Task Number");
+                    break;
+                }
+                if (tasks[taskNumMark - 1].isDone()) {
+                    System.out.println("Task " + taskNumMark + " is already marked done!");
+                    break;
+                }
                 tasks[taskNumMark - 1].setDone();
                 break;
             case "unmark":
+                //TODO: Throw and Catch Exception
+                if (words.length == 1) {
+                    System.out.println("Enter the task number after 'unmark' (e.g. unmark 1)");
+                    break;
+                }
                 int taskNumUnmark = Integer.parseInt(words[1]);
-                // TODO Error Handling - cases for 0 and a number not spanning the total number of tasks
+                //TODO: Throw and Catch Exception
+                if (taskNumUnmark == 0 || taskNumUnmark > taskIndex + 1) {
+                    System.out.println("Invalid Task Number");
+                    break;
+                }
+                //TODO: Throw and Catch Exception
+                else if (!tasks[taskNumUnmark - 1].isDone()) {
+                    System.out.println("Task " + taskNumUnmark + " wasn't done yet!");
+                    break;
+                }
                 tasks[taskNumUnmark - 1].resetDone();
                 break;
             case "deadline":
+                //TODO: Throw and Catch Exception
+                if (words.length == 1) {
+                    System.out.println("Your deadline task has no description!");
+                    break;
+                }
                 int dateIndex;
                 for (dateIndex = 0; dateIndex < words.length; dateIndex += 1) {
                     if (words[dateIndex].startsWith("/by")) {
                         break;
                     }
                 }
+                //TODO: Throw and Catch Exception
                 if (dateIndex == words.length - 1) {
                     System.out.println("No deadline found! Insert another Task!");
                     break;
@@ -68,6 +100,11 @@ public class Clovis {
                 taskIndex += 1;
                 break;
             case "todo":
+                //TODO: Throw and Catch Exception
+                if (line.length() == CHARNUM_OF_TODO) {
+                    System.out.println("Your todo task has no description!");
+                    break;
+                }
                 tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO + 1));
                 printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex + 1);
@@ -88,6 +125,7 @@ public class Clovis {
                 taskIndex += 1;
                 break;
             default:
+                //TODO: Throw and Catch Exception
                 System.out.println("Don't give me nonsense! Re-enter!");
                 break;
             }
