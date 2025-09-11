@@ -6,6 +6,7 @@ public class Clovis {
     static final int MAX_NUM_OF_TASKS = 100;
     static final int CHARNUM_OF_DATELINE = 8;
     static final int CHARNUM_OF_TODO = 4;
+    static final int CHARNUM_OF_BY = 3;
     //static final int CHARNUM_OF_EVENT = 5;
 
     public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
@@ -60,7 +61,7 @@ public class Clovis {
                     break;
                 }
                 String subStrTask = line.substring(CHARNUM_OF_DATELINE + 1, line.indexOf(" /by"));
-                String subStrDeadline = line.substring(line.indexOf("/by") + 4);
+                String subStrDeadline = line.substring(line.indexOf("/by") + CHARNUM_OF_BY);
                 tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
                 printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex + 1);
@@ -76,9 +77,6 @@ public class Clovis {
                 int fromIndex = findParamIndex(words, "/from");
                 int toIndex = findParamIndex(words, "/to");
                 String subStrEvent = assembleStringFromArrayIndexes(words, 1, fromIndex);
-//                for (String word : words) {
-//                    System.out.println(word);
-//                }
                 String subStrFrom = assembleStringFromArrayIndexes(words, fromIndex + 1, toIndex);
                 String subStrTo = assembleStringFromArrayIndexes(words, toIndex + 1);
 //                String subStrEvent = line.substring(CHARNUM_OF_EVENT,line.indexOf(" /from"));
