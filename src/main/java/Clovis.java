@@ -88,12 +88,13 @@ public class Clovis {
                 }
                 break;
             case "todo":
-                //TODO: Throw and Catch Exception
-                if (line.length() == CHARNUM_OF_TODO) {
-                    System.out.println("Your todo task has no description!");
+                try {
+                    todoEval(words);
+                } catch (ClovisException.ArgumentValueMissing e) {
+                    System.out.println("You are missing your task description!");
                     break;
                 }
-                tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO + 1));
+                tasks[taskIndex] = new Todo(assembleStringFromArrayIndexes(words,1));
                 printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex + 1);
                 taskIndex += 1;
@@ -224,5 +225,11 @@ public class Clovis {
             throw new ClovisException.ArgumentValueMissing();
         }
         return dateIndex;
+    }
+
+    public static void todoEval (String[] words) {
+        if (words.length == 1) {
+            throw new ClovisException.ArgumentValueMissing();
+        }
     }
 }
