@@ -111,6 +111,11 @@ public class Clovis {
                 taskIndex += 1;
                 break;
             case "event":
+                //TODO: Throw and Catch Exception
+                if (words.length == 1) {
+                    System.out.println("Your event task has no description!");
+                    break;
+                }
                 int fromIndex = findParamIndex(words, "/from");
                 int toIndex = findParamIndex(words, "/to");
                 String subStrEvent = assembleStringFromArrayIndexes(words, 1, fromIndex);
