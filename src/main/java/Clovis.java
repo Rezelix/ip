@@ -116,8 +116,11 @@ public class Clovis {
                 }
                 break;
             default:
-                //TODO: Throw and Catch Exception
-                System.out.println("Don't give me nonsense! Re-enter!");
+                try {
+                    throw new ClovisException.InvalidInput();
+                } catch (ClovisException.InvalidInput) {
+                    System.out.println("Don't give me nonsense! Re-enter!");
+                }
                 break;
             }
             printDivider();
@@ -211,12 +214,7 @@ public class Clovis {
 
     public static int deadlineEval (String[] words, String line,  int taskIndex) {
         checkForDescription(words);
-        int dateIndex;
-        for (dateIndex = 0; dateIndex < words.length; dateIndex += 1) {
-            if (words[dateIndex].startsWith("/by")) {
-                break;
-            }
-        }
+        int dateIndex = findParamIndex(words, "/by");
         if (dateIndex == words.length) {
             throw new ClovisException.ArgumentValueMissing();
         }
