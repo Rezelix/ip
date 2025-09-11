@@ -10,6 +10,7 @@ public class Clovis {
     //static final int CHARNUM_OF_EVENT = 5;
 
     public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
+    //public static ClovisException uncheckedException = new ClovisException();
 
     public static void main(String[] args) {
         String logo = "  _____ _            _\n" +
@@ -39,21 +40,29 @@ public class Clovis {
                 System.exit(0);
                 break;
             case "mark":
-                //TODO: Throw and Catch Exception
-                if (words.length == 1) {
+//                //TODO: Throw and Catch Exception
+//                if (words.length == 1) {
+//                    System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
+//                    break;
+//                }
+//                int taskNumMark = Integer.parseInt(words[1]);
+//                //TODO: Throw and Catch Exception
+//                if (taskNumMark == 0 || taskNumMark > taskIndex + 1) {
+//                    System.out.println("Invalid Task Number");
+//                    break;
+//                }
+//                if (tasks[taskNumMark - 1].isDone()) {
+//                    System.out.println("Task " + taskNumMark + " is already marked done!");
+//                    break;
+//                }
+                try {
+                    int taskNumMark = markEval(words, taskIndex);
+                } catch (ClovisException.InvalidInput e) {
                     System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
-                    break;
+                } catch (ClovisException.ArgumentValueMissing e) {
+                    System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
                 }
-                int taskNumMark = Integer.parseInt(words[1]);
-                //TODO: Throw and Catch Exception
-                if (taskNumMark == 0 || taskNumMark > taskIndex + 1) {
-                    System.out.println("Invalid Task Number");
-                    break;
-                }
-                if (tasks[taskNumMark - 1].isDone()) {
-                    System.out.println("Task " + taskNumMark + " is already marked done!");
-                    break;
-                }
+
                 tasks[taskNumMark - 1].setDone();
                 break;
             case "unmark":
@@ -191,6 +200,20 @@ public class Clovis {
         }
         output = output.trim();
         return output;
+    }
+
+    public static int markEval (String[] words, int taskIndex) {
+        if (words.length == 1) {
+            throw new ClovisException.ArgumentValueMissing("Enter the task number after 'mark' (e.g. mark 1)");
+        }
+        int taskNumMark = Integer.parseInt(words[1]);
+        if (taskNumMark == 0 || taskNumMark > taskIndex + 1) {
+            throw new ClovisException.InvalidInput("Enter the task number after 'mark' (e.g. mark 1)");
+        }
+        if (tasks[taskNumMark - 1].isDone()) {
+            throw new ClovisException.HumanError("Task " + taskNumMark + " is already marked done!");
+        }
+        return taskNumMark;
     }
 
 }
