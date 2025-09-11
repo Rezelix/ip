@@ -118,7 +118,7 @@ public class Clovis {
             default:
                 try {
                     throw new ClovisException.InvalidInput();
-                } catch (ClovisException.InvalidInput) {
+                } catch (ClovisException.InvalidInput e) {
                     System.out.println("Don't give me nonsense! Re-enter!");
                 }
                 break;
