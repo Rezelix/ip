@@ -10,6 +10,7 @@ public class Clovis {
     //static final int CHARNUM_OF_EVENT = 5;
 
     public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
+    //public static ClovisException uncheckedException = new ClovisException();
 
     public static void main(String[] args) {
         String logo = "  _____ _            _\n" +
@@ -39,99 +40,87 @@ public class Clovis {
                 System.exit(0);
                 break;
             case "mark":
-                //TODO: Throw and Catch Exception
-                if (words.length == 1) {
+                try {
+                    int taskNumMark = markEval(words, taskIndex);
+                    tasks[taskNumMark - 1].setDone();
+                } catch (ClovisException.InvalidInput e) {
+                    System.out.println("Invalid input! It shouldn't be 0 or span outside of the active tasks!");
+                    break;
+                } catch (ClovisException.ArgumentValueMissing e) {
                     System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
                     break;
-                }
-                int taskNumMark = Integer.parseInt(words[1]);
-                //TODO: Throw and Catch Exception
-                if (taskNumMark == 0 || taskNumMark > taskIndex + 1) {
-                    System.out.println("Invalid Task Number");
+                } catch (ClovisException.HumanError e) {
+                    System.out.println("Task " + taskIndex + " was already marked done!");
                     break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! It should be a number!");
                 }
-                if (tasks[taskNumMark - 1].isDone()) {
-                    System.out.println("Task " + taskNumMark + " is already marked done!");
-                    break;
-                }
-                tasks[taskNumMark - 1].setDone();
                 break;
             case "unmark":
-                //TODO: Throw and Catch Exception
-                if (words.length == 1) {
+                try {
+                    int taskNumUnmark = unmarkEval(words, taskIndex);
+                    tasks[taskNumUnmark - 1].resetDone();
+                } catch (ClovisException.InvalidInput e) {
+                    System.out.println("Invalid input! It shouldn't be 0 or span outside of the active tasks!");
+                    break;
+                } catch (ClovisException.ArgumentValueMissing e) {
                     System.out.println("Enter the task number after 'unmark' (e.g. unmark 1)");
                     break;
-                }
-                int taskNumUnmark = Integer.parseInt(words[1]);
-                //TODO: Throw and Catch Exception
-                if (taskNumUnmark == 0 || taskNumUnmark > taskIndex + 1) {
-                    System.out.println("Invalid Task Number");
+                } catch (ClovisException.HumanError e) {
+                    System.out.println("Task " + taskIndex + " wasn't done yet!");
                     break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input! It should be a number!");
                 }
-                //TODO: Throw and Catch Exception
-                else if (!tasks[taskNumUnmark - 1].isDone()) {
-                    System.out.println("Task " + taskNumUnmark + " wasn't done yet!");
-                    break;
-                }
-                tasks[taskNumUnmark - 1].resetDone();
                 break;
             case "deadline":
-                //TODO: Throw and Catch Exception
-                if (words.length == 1) {
-                    System.out.println("Your deadline task has no description!");
+                try {
+                    int dateIndex = deadlineEval(words,line,taskIndex);
+                    String subStrTask = assembleStringFromArrayIndexes(words,1,dateIndex);
+                    String subStrDeadline = assembleStringFromArrayIndexes(words,dateIndex+1);
+                    tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
+                    printAck(tasks[taskIndex].toString());
+                    printTotalInList(taskIndex + 1);
+                    taskIndex += 1;
+                } catch (ClovisException.ArgumentValueMissing e) {
+                    System.out.println("Missing Arguments, either no description or no deadline");
                     break;
                 }
-                int dateIndex;
-                for (dateIndex = 0; dateIndex < words.length; dateIndex += 1) {
-                    if (words[dateIndex].startsWith("/by")) {
-                        break;
-                    }
-                }
-                //TODO: Throw and Catch Exception
-                if (dateIndex == words.length - 1) {
-                    System.out.println("No deadline found! Insert another Task!");
-                    break;
-                }
-                String subStrTask = line.substring(CHARNUM_OF_DATELINE + 1, line.indexOf(" /by"));
-                String subStrDeadline = line.substring(line.indexOf("/by") + CHARNUM_OF_BY);
-                tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
-                printAck(tasks[taskIndex].toString());
-                printTotalInList(taskIndex + 1);
-                taskIndex += 1;
                 break;
             case "todo":
-                //TODO: Throw and Catch Exception
-                if (line.length() == CHARNUM_OF_TODO) {
-                    System.out.println("Your todo task has no description!");
+                try {
+                    checkForDescription(words);
+                } catch (ClovisException.ArgumentValueMissing e) {
+                    System.out.println("You are missing your task description!");
                     break;
                 }
-                tasks[taskIndex] = new Todo(line.substring(CHARNUM_OF_TODO + 1));
+                tasks[taskIndex] = new Todo(assembleStringFromArrayIndexes(words,1));
                 printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex + 1);
                 taskIndex += 1;
                 break;
             case "event":
-                //TODO: Throw and Catch Exception
-                if (words.length == 1) {
-                    System.out.println("Your event task has no description!");
-                    break;
+                try {
+                    eventEval(words);
+                    int fromIndex = findParamIndex(words, "/from");
+                    int toIndex = findParamIndex(words, "/to");
+                    String subStrEvent = assembleStringFromArrayIndexes(words, 1, fromIndex);
+                    String subStrFrom = assembleStringFromArrayIndexes(words, fromIndex + 1, toIndex);
+                    String subStrTo = assembleStringFromArrayIndexes(words, toIndex + 1);
+                    tasks[taskIndex] = new Event(subStrEvent, subStrFrom, subStrTo);
+                    printAck(tasks[taskIndex].toString());
+                    printTotalInList(taskIndex + 1);
+                    taskIndex += 1;
+                } catch (ClovisException.ArgumentValueMissing e) {
+                    System.out.println("You are missing your task description or other parameters!");
                 }
-                int fromIndex = findParamIndex(words, "/from");
-                int toIndex = findParamIndex(words, "/to");
-                String subStrEvent = assembleStringFromArrayIndexes(words, 1, fromIndex);
-                String subStrFrom = assembleStringFromArrayIndexes(words, fromIndex + 1, toIndex);
-                String subStrTo = assembleStringFromArrayIndexes(words, toIndex + 1);
-//                String subStrEvent = line.substring(CHARNUM_OF_EVENT,line.indexOf(" /from"));
-//                String subStrFrom = line.substring(line.indexOf("/from")+6, line.indexOf(" /to"));
-//                String subStrTo = line.substring(line.indexOf("/to")+4);
-                tasks[taskIndex] = new Event(subStrEvent, subStrFrom, subStrTo);
-                printAck(tasks[taskIndex].toString());
-                printTotalInList(taskIndex + 1);
-                taskIndex += 1;
                 break;
             default:
-                //TODO: Throw and Catch Exception
-                System.out.println("Don't give me nonsense! Re-enter!");
+                try {
+                    throw new ClovisException.InvalidInput();
+                } catch (ClovisException.InvalidInput e) {
+                    System.out.println("Don't give me nonsense! Re-enter!");
+                }
                 break;
             }
             printDivider();
@@ -165,13 +154,19 @@ public class Clovis {
         return output;
     }
 
-    public static int findParamIndex(String[] array, String keyword) {
+    public static int findParamIndex(String[] array, String keyword) throws ClovisException.ArgumentValueMissing {
         for (int i = 1; i < array.length; i++) {
             if (array[i].equals(keyword)) {
                 return i;
             }
         }
-        return -1; //TODO error handling - Param not found
+        throw new ClovisException.ArgumentValueMissing();
+    }
+
+    public static void checkForDescription (String[] words) throws ClovisException.ArgumentValueMissing {
+        if (words.length == 1) {
+            throw new ClovisException.ArgumentValueMissing();
+        }
     }
 
     public static String assembleStringFromArrayIndexes(String[] array, int startIndex, int endIndex) {
@@ -193,4 +188,40 @@ public class Clovis {
         return output;
     }
 
+    public static int markEval (String[] words, int taskIndex) {
+        checkForDescription(words);
+        int taskNumMark = Integer.parseInt(words[1]);
+        if (taskNumMark == 0 || taskNumMark >= taskIndex + 1) {
+            throw new ClovisException.InvalidInput();
+        }
+        if (tasks[taskNumMark - 1].isDone()) {
+            throw new ClovisException.HumanError();
+        }
+        return taskNumMark;
+    }
+
+    public static int unmarkEval (String[] words, int taskIndex) {
+        checkForDescription(words);
+        int taskNumUnMark = Integer.parseInt(words[1]);
+        if (taskNumUnMark == 0 || taskNumUnMark >= taskIndex + 1) {
+            throw new ClovisException.InvalidInput();
+        }
+        if (!tasks[taskNumUnMark - 1].isDone()) {
+            throw new ClovisException.HumanError();
+        }
+        return taskNumUnMark;
+    }
+
+    public static int deadlineEval (String[] words, String line,  int taskIndex) {
+        checkForDescription(words);
+        int dateIndex = findParamIndex(words, "/by");
+        if (dateIndex == words.length) {
+            throw new ClovisException.ArgumentValueMissing();
+        }
+        return dateIndex;
+    }
+
+    public static void eventEval (String[] words) {
+        checkForDescription(words);
+    }
 }
