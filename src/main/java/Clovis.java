@@ -33,6 +33,9 @@ public class Clovis {
             switch (cmdType) {
             case "list":
                 printTasks(tasks);
+                if (taskIndex == 0) {
+                    System.out.println("No Tasks have been entered");
+                }
                 break;
             case "bye":
                 System.out.println("Bye. Don't come again!");
