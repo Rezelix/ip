@@ -80,7 +80,7 @@ public class Clovis {
                 break;
             case "deadline":
                 try {
-                    int dateIndex = deadlineEval(words,line,taskIndex);
+                    int dateIndex = deadlineEval(words);
                     String subStrTask = assembleStringFromArrayIndexes(words,1,dateIndex);
                     String subStrDeadline = assembleStringFromArrayIndexes(words,dateIndex+1);
                     tasks.add(new Deadline(subStrTask, subStrDeadline));
@@ -122,7 +122,17 @@ public class Clovis {
                 }
                 break;
             case "delete":
-                int delIndex = Integer.parseInt(words[1]);
+                try {
+                    int delIndex = deleteEval(words);
+                    String deletedToString = tasks.get(delIndex).toString();
+                    tasks.remove(delIndex);
+                    printDelAck(delIndex,deletedToString);
+                    taskIndex -= 1;
+                } catch (ClovisException.ArgumentValueMissing e) {
+                    System.out.println("You did not tell me which task delete!");
+                } catch (ClovisException.InvalidInput e) {
+                    System.out.println("Invalid input! It should be within the span of the number of tasks!");
+                }
                 break;
             default:
                 try {
@@ -149,6 +159,10 @@ public class Clovis {
 
     public static void printAck(String line) {
         System.out.println("added: " + line);
+    }
+
+    public static void printDelAck(int delIndex, String delStr) {
+        System.out.println("Deleted the task: " + (delIndex + 1) + "." + delStr );
     }
 
     public static void printTotalInList(int numOfTasks) {
@@ -182,7 +196,6 @@ public class Clovis {
         String output = "";
         for (int i = startIndex; i < endIndex; i++) {
             output += array[i] + " ";
-//            output = output.concat(array[i] + " ");
         }
         output = output.trim();
         return output;
@@ -221,7 +234,7 @@ public class Clovis {
         return taskNumUnMark;
     }
 
-    public static int deadlineEval (String[] words, String line,  int taskIndex) {
+    public static int deadlineEval (String[] words) {
         checkForDescription(words);
         int dateIndex = findParamIndex(words, "/by");
         if (dateIndex == words.length) {
@@ -232,5 +245,14 @@ public class Clovis {
 
     public static void eventEval (String[] words) {
         checkForDescription(words);
+    }
+
+    public static int deleteEval (String[] words) {
+        checkForDescription(words);
+        int delIndex = Integer.parseInt(words[1]) - 1;
+        if (delIndex < 0 || delIndex > tasks.size() - 1) {
+            throw new ClovisException.InvalidInput();
+        }
+        return delIndex;
     }
 }

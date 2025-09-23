@@ -6,4 +6,7 @@ fake task
 list
 mark 2
 mark 3
+delete 2
+delete 3
+list
 bye

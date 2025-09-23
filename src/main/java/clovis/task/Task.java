@@ -4,7 +4,6 @@ public class Task {
     private String name;
     private boolean isDone;
     private String type;
-
     public Task(String name) {
         this.name = name;
         this.isDone = false;
@@ -43,5 +42,4 @@ public class Task {
     public String toString() {
         return "This task's class does not have an overridden toString()";
     }
-
 }
