@@ -1,9 +1,9 @@
-package Clovis;
+package clovis;
 
-import Clovis.task.Task;
-import Clovis.task.Deadline;
-import Clovis.task.Todo;
-import Clovis.task.Event;
+import clovis.task.Task;
+import clovis.task.Deadline;
+import clovis.task.Todo;
+import clovis.task.Event;
 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -11,15 +11,8 @@ import java.util.ArrayList;
 public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
-    static final int MAX_NUM_OF_TASKS = 100;
-    static final int CHARNUM_OF_DATELINE = 8;
-    static final int CHARNUM_OF_TODO = 4;
-    static final int CHARNUM_OF_BY = 3;
-    //static final int CHARNUM_OF_EVENT = 5;
 
-    //public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
     public static ArrayList<Task> tasks = new ArrayList<>();
-    //public static Clovis.ClovisException uncheckedException = new Clovis.ClovisException();
 
     public static void main(String[] args) {
         String logo = "  _____ _            _\n" +
@@ -62,7 +55,7 @@ public class Clovis {
                     System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
                     break;
                 } catch (ClovisException.HumanError e) {
-                    System.out.println("Clovis.task.Task " + taskIndex + " was already marked done!");
+                    System.out.println("Task " + taskIndex + " was already marked done!");
                     break;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input! It should be a number!");
@@ -79,7 +72,7 @@ public class Clovis {
                     System.out.println("Enter the task number after 'unmark' (e.g. unmark 1)");
                     break;
                 } catch (ClovisException.HumanError e) {
-                    System.out.println("Clovis.task.Task " + taskIndex + " wasn't done yet!");
+                    System.out.println("Task " + taskIndex + " wasn't done yet!");
                     break;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input! It should be a number!");
@@ -90,10 +83,8 @@ public class Clovis {
                     int dateIndex = deadlineEval(words,line,taskIndex);
                     String subStrTask = assembleStringFromArrayIndexes(words,1,dateIndex);
                     String subStrDeadline = assembleStringFromArrayIndexes(words,dateIndex+1);
-//                    tasks[taskIndex] = new Deadline(subStrTask, subStrDeadline);
                     tasks.add(new Deadline(subStrTask, subStrDeadline));
                     printAck(tasks.get(taskIndex).toString());
-//                    printAck(tasks[taskIndex].toString());
                     printTotalInList(taskIndex + 1);
                     taskIndex += 1;
                 } catch (ClovisException.ArgumentValueMissing e) {
@@ -108,10 +99,8 @@ public class Clovis {
                     System.out.println("You are missing your task description!");
                     break;
                 }
-//                tasks[taskIndex] = new Todo(assembleStringFromArrayIndexes(words,1));
                 tasks.add(new Todo(assembleStringFromArrayIndexes(words,1)));
                 printAck(tasks.get(taskIndex).toString());
-//                printAck(tasks[taskIndex].toString());
                 printTotalInList(taskIndex + 1);
                 taskIndex += 1;
                 break;
@@ -123,12 +112,10 @@ public class Clovis {
                     String subStrEvent = assembleStringFromArrayIndexes(words, 1, fromIndex);
                     String subStrFrom = assembleStringFromArrayIndexes(words, fromIndex + 1, toIndex);
                     String subStrTo = assembleStringFromArrayIndexes(words, toIndex + 1);
-//                    tasks[taskIndex] = new Event(subStrEvent, subStrFrom, subStrTo);
                     tasks.add(new Event(subStrEvent, subStrFrom, subStrTo));
                     printAck(tasks.get(taskIndex).toString());
-//                    printAck(tasks[taskIndex].toString());
                     // TODO print total in list for array list
-                    // printTotalInList(taskIndex + 1);
+                    printTotalInList(taskIndex + 1);
                     taskIndex += 1;
                 } catch (ClovisException.ArgumentValueMissing e) {
                     System.out.println("You are missing your task description or other parameters!");
@@ -150,9 +137,9 @@ public class Clovis {
 
     }
 
-    public static void printTasks(Task[] tasks) {
-        for (int i = 0; tasks[i] != null; i++) {
-            System.out.println(i + 1 + "." + tasks[i].toString());
+    public static void printTasks(ArrayList<Task>  tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(i + 1 + "." + tasks.get(i).toString());
         }
     }
 
@@ -216,7 +203,7 @@ public class Clovis {
         if (taskNumMark == 0 || taskNumMark >= taskIndex + 1) {
             throw new ClovisException.InvalidInput();
         }
-        if (tasks[taskNumMark - 1].isDone()) {
+        if (tasks.get(taskNumMark - 1).isDone()) {
             throw new ClovisException.HumanError();
         }
         return taskNumMark;
@@ -228,7 +215,7 @@ public class Clovis {
         if (taskNumUnMark == 0 || taskNumUnMark >= taskIndex + 1) {
             throw new ClovisException.InvalidInput();
         }
-        if (!tasks[taskNumUnMark - 1].isDone()) {
+        if (!tasks.get(taskNumUnMark - 1).isDone()) {
             throw new ClovisException.HumanError();
         }
         return taskNumUnMark;
