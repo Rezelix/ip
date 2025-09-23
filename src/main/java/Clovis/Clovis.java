@@ -1,3 +1,10 @@
+package Clovis;
+
+import Clovis.task.Task;
+import Clovis.task.Deadline;
+import Clovis.task.Todo;
+import Clovis.task.Event;
+
 import java.util.Scanner;
 
 public class Clovis {
@@ -10,7 +17,7 @@ public class Clovis {
     //static final int CHARNUM_OF_EVENT = 5;
 
     public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
-    //public static ClovisException uncheckedException = new ClovisException();
+    //public static Clovis.ClovisException uncheckedException = new Clovis.ClovisException();
 
     public static void main(String[] args) {
         String logo = "  _____ _            _\n" +
@@ -53,7 +60,7 @@ public class Clovis {
                     System.out.println("Enter the task number after 'mark' (e.g. mark 1)");
                     break;
                 } catch (ClovisException.HumanError e) {
-                    System.out.println("Task " + taskIndex + " was already marked done!");
+                    System.out.println("Clovis.task.Task " + taskIndex + " was already marked done!");
                     break;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input! It should be a number!");
@@ -70,7 +77,7 @@ public class Clovis {
                     System.out.println("Enter the task number after 'unmark' (e.g. unmark 1)");
                     break;
                 } catch (ClovisException.HumanError e) {
-                    System.out.println("Task " + taskIndex + " wasn't done yet!");
+                    System.out.println("Clovis.task.Task " + taskIndex + " wasn't done yet!");
                     break;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input! It should be a number!");

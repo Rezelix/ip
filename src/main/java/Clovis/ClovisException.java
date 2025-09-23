@@ -1,3 +1,5 @@
+package Clovis;
+
 public class ClovisException{
     public static class ArgumentValueMissing extends RuntimeException{
         public ArgumentValueMissing() {
