@@ -125,6 +125,9 @@ public class Clovis {
                     System.out.println("You are missing your task description or other parameters!");
                 }
                 break;
+            case "delete":
+                int delIndex = Integer.parseInt(words[1]);
+                break;
             default:
                 try {
                     throw new ClovisException.InvalidInput();
