@@ -1,4 +1,4 @@
-package Clovis.task;
+package clovis.task;
 
 public class Event extends Task{
     protected String startDateTime;
