@@ -42,8 +42,9 @@ public class Clovis {
                 System.exit(0);
                 break;
             case "mark":
+                checkArgs(words);
                 try {
-                    int taskNumMark = markEval(words, taskIndex);
+                    int taskNumMark = markEval(words);
                     tasks.get(taskNumMark - 1).setDone();
                     System.out.println("Marked Task " + taskNumMark + " successfully!");
                     System.out.println(tasks.get(taskNumMark - 1).toString());
@@ -61,8 +62,9 @@ public class Clovis {
                 }
                 break;
             case "unmark":
+                checkArgs(words);
                 try {
-                    int taskNumUnmark = unmarkEval(words, taskIndex);
+                    int taskNumUnmark = unmarkEval(words);
                     tasks.get(taskNumUnmark - 1).resetDone();
                     System.out.println("Unmarked Task " + taskNumUnmark + " successfully!");
                     System.out.println(tasks.get(taskNumUnmark - 1).toString());
@@ -80,46 +82,29 @@ public class Clovis {
                 }
                 break;
             case "deadline":
+                checkArgs(words);
                 try {
-                    int dateIndex = deadlineEval(words);
-                    String subStrTask = assembleStrFromArrIndexes(words,1,dateIndex);
-                    String subStrDeadline = assembleStrFromArrIndexes(words,dateIndex+1);
-                    tasks.add(new Deadline(subStrTask, subStrDeadline));
-                    printAck(tasks.get(taskIndex).toString());
-                    printTotalInList(taskIndex + 1);
+                    tasks.add(parseDeadline(words));
+                    printTaskCreation(taskIndex);
                     taskIndex += 1;
                 } catch (ClovisException.ArgumentValueMissing e) {
                     System.out.println("Missing Arguments, either no description or no deadline");
                     break;
+                } catch (ClovisException.HumanError e) {
+
                 }
                 break;
             case "todo":
-                try {
-                    checkForDescription(words);
-                } catch (ClovisException.ArgumentValueMissing e) {
-                    System.out.println("You are missing your task description!");
-                    break;
-                }
+                checkArgs(words);
                 tasks.add(new Todo(assembleStrFromArrIndexes(words,1)));
-                printAck(tasks.get(taskIndex).toString());
-                printTotalInList(taskIndex + 1);
+                printTaskCreation(taskIndex);
                 taskIndex += 1;
                 break;
             case "event":
-                try {
-                    eventEval(words);
-                    int fromIndex = findParamIndex(words, "/from");
-                    int toIndex = findParamIndex(words, "/to");
-                    String subStrEvent = assembleStrFromArrIndexes(words, 1, fromIndex);
-                    String subStrFrom = assembleStrFromArrIndexes(words, fromIndex + 1, toIndex);
-                    String subStrTo = assembleStrFromArrIndexes(words, toIndex + 1);
-                    tasks.add(new Event(subStrEvent, subStrFrom, subStrTo));
-                    printAck(tasks.get(taskIndex).toString());
-                    printTotalInList(taskIndex + 1);
-                    taskIndex += 1;
-                } catch (ClovisException.ArgumentValueMissing e) {
-                    System.out.println("You are missing your task description or other parameters!");
-                }
+                checkArgs(words);
+                tasks.add(parseEvent(words));
+                printTaskCreation(taskIndex);
+                taskIndex += 1;
                 break;
             case "delete":
                 try {
@@ -172,6 +157,11 @@ public class Clovis {
 
     }
 
+    private static void printTaskCreation(int taskIndex) {
+        printAck(tasks.get(taskIndex).toString());
+        printTotalInList(taskIndex + 1);
+    }
+
     public static void printTasks(ArrayList<Task>  tasks) {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(i + 1 + "." + tasks.get(i).toString());
@@ -188,18 +178,6 @@ public class Clovis {
         System.out.println("Hello from\n" + logo);
         System.out.println("What do you want from me this time?");
         System.out.print(DIVIDER);
-    }
-
-    private static void createDataDir() {
-        File dir = new File("data");
-        if (!dir.exists()) {
-            System.out.println("Data directory does not exist, I'm making it now");
-            if (dir.mkdir()) {
-                System.out.println("Created tasks directory @ " + dir.getAbsolutePath());
-            } else {
-                System.out.println("Failed to create tasks directory, try again");
-            }
-        }
     }
 
     public static void printDivider() {
@@ -226,6 +204,18 @@ public class Clovis {
         return output;
     }
 
+    private static void createDataDir() {
+        File dir = new File("data");
+        if (!dir.exists()) {
+            System.out.println("Data directory does not exist, I'm making it now");
+            if (dir.mkdir()) {
+                System.out.println("Created tasks directory @ " + dir.getAbsolutePath());
+            } else {
+                System.out.println("Failed to create tasks directory, try again");
+            }
+        }
+    }
+
     public static int findParamIndex(String[] array, String keyword) throws ClovisException.ArgumentValueMissing {
         for (int i = 1; i < array.length; i++) {
             if (array[i].equals(keyword)) {
@@ -235,9 +225,15 @@ public class Clovis {
         throw new ClovisException.ArgumentValueMissing();
     }
 
-    public static void checkForDescription (String[] words) throws ClovisException.ArgumentValueMissing {
+    private static void checkIndexOutOfScope(int index) throws ClovisException.InvalidInput {
+        if (index < 0 || index > tasks.size() - 1) {
+            throw new ClovisException.InvalidInput();
+        }
+    }
+
+    public static void checkArgs(String[] words) throws ClovisException.MissingArgument {
         if (words.length == 1) {
-            throw new ClovisException.ArgumentValueMissing();
+            throw new ClovisException.MissingArgument();
         }
     }
 
@@ -259,10 +255,11 @@ public class Clovis {
         return output;
     }
 
-    public static int markEval (String[] words, int taskIndex) {
-        checkForDescription(words);
+    public static int markEval (String[] words) throws ClovisException.InvalidInput, ClovisException.HumanError {
         int taskNumMark = Integer.parseInt(words[1]);
-        if (taskNumMark == 0 || taskNumMark >= taskIndex + 1) {
+        try {
+            checkIndexOutOfScope(taskNumMark-1);
+        } catch (ClovisException.InvalidInput e) {
             throw new ClovisException.InvalidInput();
         }
         if (tasks.get(taskNumMark - 1).isDone()) {
@@ -271,10 +268,11 @@ public class Clovis {
         return taskNumMark;
     }
 
-    public static int unmarkEval (String[] words, int taskIndex) {
-        checkForDescription(words);
+    public static int unmarkEval (String[] words) throws ClovisException.InvalidInput, ClovisException.HumanError {
         int taskNumUnMark = Integer.parseInt(words[1]);
-        if (taskNumUnMark == 0 || taskNumUnMark >= taskIndex + 1) {
+        try {
+            checkIndexOutOfScope(taskNumUnMark-1);
+        } catch (ClovisException.InvalidInput e) {
             throw new ClovisException.InvalidInput();
         }
         if (!tasks.get(taskNumUnMark - 1).isDone()) {
@@ -283,25 +281,45 @@ public class Clovis {
         return taskNumUnMark;
     }
 
-    public static int deadlineEval (String[] words) {
-        checkForDescription(words);
-        int dateIndex = findParamIndex(words, "/by");
-        if (dateIndex == words.length) {
-            throw new ClovisException.ArgumentValueMissing();
-        }
-        return dateIndex;
-    }
-
-    public static void eventEval (String[] words) {
-        checkForDescription(words);
-    }
-
-    public static int deleteEval (String[] words) {
-        checkForDescription(words);
+    public static int deleteEval (String[] words) throws ClovisException.InvalidInput{
         int delIndex = Integer.parseInt(words[1]) - 1;
-        if (delIndex < 0 || delIndex > tasks.size() - 1) {
+        try {
+            checkIndexOutOfScope(delIndex);
+        } catch (ClovisException.InvalidInput e) {
             throw new ClovisException.InvalidInput();
         }
         return delIndex;
     }
+
+    public static Event parseEvent(String[] words) throws ClovisException.ArgumentValueMissing {
+        int fromIndex;
+        int toIndex;
+        try {
+            fromIndex = findParamIndex(words, "/from");
+            toIndex = findParamIndex(words, "/to");
+        } catch (ClovisException.ArgumentValueMissing e) {
+            throw new ClovisException.ArgumentValueMissing();
+        }
+
+        String description = assembleStrFromArrIndexes(words, 1, fromIndex);
+        String startTime = assembleStrFromArrIndexes(words, fromIndex + 1, toIndex);
+        String endTime = assembleStrFromArrIndexes(words, toIndex + 1);
+        return new Event(description,startTime,endTime);
+    }
+
+    public static Deadline parseDeadline(String[] words) throws ClovisException.ArgumentValueMissing  {
+        int dateIndex;
+        try {
+            dateIndex = findParamIndex(words, "/by");
+        } catch (ClovisException.ArgumentValueMissing e) {
+            throw new ClovisException.ArgumentValueMissing();
+        }
+        String description = assembleStrFromArrIndexes(words,1,dateIndex);
+        String deadlineTime = assembleStrFromArrIndexes(words,dateIndex+1);
+        return new Deadline(description,deadlineTime);
+    }
+
+
+
+
 }

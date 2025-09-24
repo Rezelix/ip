@@ -13,4 +13,7 @@ public class ClovisException{
         public HumanError() {
         }
     }
+    public static class MissingArgument extends RuntimeException{
+        public MissingArgument() {}
+    }
 }
