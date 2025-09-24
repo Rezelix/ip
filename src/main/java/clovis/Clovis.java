@@ -27,8 +27,8 @@ public class Clovis {
         int taskIndex = 0;
         Scanner input = new Scanner(System.in);
         while (true) {
-            String line = input.nextLine();
-            String[] words = line.split(" ");
+            String line = input.nextLine().trim();
+            String[] words = line.split("\s");
             words = trimWords(words);
             String cmdType = words[0];
             printDivider();
