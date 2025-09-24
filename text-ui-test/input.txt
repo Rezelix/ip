@@ -9,4 +9,5 @@ mark 3
 delete 2
 delete 3
 list
+save
 bye

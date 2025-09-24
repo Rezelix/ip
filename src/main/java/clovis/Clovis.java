@@ -7,23 +7,20 @@ import clovis.task.Event;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
+    static final String TASK_FILEPATH = "data/clovis.txt";
 
     public static ArrayList<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
-        String logo = "  _____ _            _\n" +
-                " / ____| |          (_)\n" +
-                "| |    | | _____   ___ ___\n" +
-                "| |    | |/ _ \\ \\ / / / __|\n" +
-                "| |____| | (_) \\ V /| \\__ \\\n" +
-                " \\_____|_|\\___/ \\_/ |_|___/";
-        System.out.println("Hello from\n" + logo);
-        System.out.println("What do you want from me this time?");
-        printDivider();
+        printClovisIntro();
         int taskIndex = 0;
         Scanner input = new Scanner(System.in);
         while (true) {
@@ -81,8 +78,8 @@ public class Clovis {
             case "deadline":
                 try {
                     int dateIndex = deadlineEval(words);
-                    String subStrTask = assembleStringFromArrayIndexes(words,1,dateIndex);
-                    String subStrDeadline = assembleStringFromArrayIndexes(words,dateIndex+1);
+                    String subStrTask = assembleStrFromArrIndexes(words,1,dateIndex);
+                    String subStrDeadline = assembleStrFromArrIndexes(words,dateIndex+1);
                     tasks.add(new Deadline(subStrTask, subStrDeadline));
                     printAck(tasks.get(taskIndex).toString());
                     printTotalInList(taskIndex + 1);
@@ -99,7 +96,7 @@ public class Clovis {
                     System.out.println("You are missing your task description!");
                     break;
                 }
-                tasks.add(new Todo(assembleStringFromArrayIndexes(words,1)));
+                tasks.add(new Todo(assembleStrFromArrIndexes(words,1)));
                 printAck(tasks.get(taskIndex).toString());
                 printTotalInList(taskIndex + 1);
                 taskIndex += 1;
@@ -109,12 +106,11 @@ public class Clovis {
                     eventEval(words);
                     int fromIndex = findParamIndex(words, "/from");
                     int toIndex = findParamIndex(words, "/to");
-                    String subStrEvent = assembleStringFromArrayIndexes(words, 1, fromIndex);
-                    String subStrFrom = assembleStringFromArrayIndexes(words, fromIndex + 1, toIndex);
-                    String subStrTo = assembleStringFromArrayIndexes(words, toIndex + 1);
+                    String subStrEvent = assembleStrFromArrIndexes(words, 1, fromIndex);
+                    String subStrFrom = assembleStrFromArrIndexes(words, fromIndex + 1, toIndex);
+                    String subStrTo = assembleStrFromArrIndexes(words, toIndex + 1);
                     tasks.add(new Event(subStrEvent, subStrFrom, subStrTo));
                     printAck(tasks.get(taskIndex).toString());
-                    // TODO print total in list for array list
                     printTotalInList(taskIndex + 1);
                     taskIndex += 1;
                 } catch (ClovisException.ArgumentValueMissing e) {
@@ -134,6 +130,31 @@ public class Clovis {
                     System.out.println("Invalid input! It should be within the span of the number of tasks!");
                 }
                 break;
+            case "save":
+                if (taskIndex == 0) {
+                    System.out.println("No Tasks have been entered");
+                    break;
+                }
+                System.out.println("Saving tasks to file...");
+                try {
+                    createDataDir();
+                    FileWriter fw = new FileWriter(TASK_FILEPATH);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        try {
+                            fw.write(tasks.get(i).toExportString() + System.lineSeparator());
+                        } catch (IOException e) {
+                            System.out.println("Failed to save task " + tasks.get(i).toString());
+                            break;
+                        }
+                        System.out.println("Successfully wrote task " + i + " : " + tasks.get(i).toString());
+                    }
+                    System.out.println("Tasks saved!");
+                    fw.close();
+                    break;
+                } catch (IOException e) {
+                    System.out.println("Error while writing tasks to file!");
+                    break;
+                }
             default:
                 try {
                     throw new ClovisException.InvalidInput();
@@ -150,6 +171,30 @@ public class Clovis {
     public static void printTasks(ArrayList<Task>  tasks) {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(i + 1 + "." + tasks.get(i).toString());
+        }
+    }
+
+    private static void printClovisIntro() {
+        String logo = "  _____ _            _\n" +
+                " / ____| |          (_)\n" +
+                "| |    | | _____   ___ ___\n" +
+                "| |    | |/ _ \\ \\ / / / __|\n" +
+                "| |____| | (_) \\ V /| \\__ \\\n" +
+                " \\_____|_|\\___/ \\_/ |_|___/";
+        System.out.println("Hello from\n" + logo);
+        System.out.println("What do you want from me this time?");
+        System.out.print(DIVIDER);
+    }
+
+    private static void createDataDir() {
+        File dir = new File("data");
+        if (!dir.exists()) {
+            System.out.println("Data directory does not exist, I'm making it now");
+            if (dir.mkdir()) {
+                System.out.println("Created tasks directory @ " + dir.getAbsolutePath());
+            } else {
+                System.out.println("Failed to create tasks directory, try again");
+            }
         }
     }
 
@@ -192,7 +237,7 @@ public class Clovis {
         }
     }
 
-    public static String assembleStringFromArrayIndexes(String[] array, int startIndex, int endIndex) {
+    public static String assembleStrFromArrIndexes(String[] array, int startIndex, int endIndex) {
         String output = "";
         for (int i = startIndex; i < endIndex; i++) {
             output += array[i] + " ";
@@ -201,7 +246,7 @@ public class Clovis {
         return output;
     }
 
-    public static String assembleStringFromArrayIndexes(String[] array, int startIndex) {
+    public static String assembleStrFromArrIndexes(String[] array, int startIndex) {
         String output = "";
         for (int i = startIndex; i < array.length; i++) {
             output += array[i] + " ";
