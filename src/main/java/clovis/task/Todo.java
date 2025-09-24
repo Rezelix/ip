@@ -10,4 +10,9 @@ public class Todo extends Task{
     public String toString() {
         return super.getStatus() + super.getName();
     }
+
+    @Override
+    public String toExportString() {
+        return this.getTypeAbbrev() + "|" + (this.isDone() ? 1 : 0) + "|" + this.getName();
+    }
 }

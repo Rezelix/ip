@@ -17,4 +17,9 @@ public class Deadline extends Task{
     public String toString() {
         return super.getStatus() + super.getName() + " (by: " + this.getDateTimeDeadline() + ")";
     }
+
+    @Override
+    public String toExportString() {
+        return this.getTypeAbbrev() + "|" + (this.isDone() ? 1 : 0) + "|" + this.getName() + "|" + this.getDateTimeDeadline();
+    }
 }

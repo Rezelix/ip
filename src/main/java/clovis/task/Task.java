@@ -39,5 +39,8 @@ public class Task {
     public String toString() {
         return "This task's class does not have an overridden toString()";
     }
+    public String toExportString() {
+        return "This task's class does not have an overridden toExportString()";
+    }
 
 }

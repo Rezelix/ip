@@ -6,4 +6,5 @@ fake task
 list
 mark 2
 mark 3
+save
 bye

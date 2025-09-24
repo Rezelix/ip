@@ -19,7 +19,12 @@ public class Event extends Task{
         return this.endDateTime;
     }
 
+    @Override
     public String toString() {
         return this.getStatus() + this.getName() + " (from: " + this.getStartDateTime() + " to: " + this.getEndDateTime() + ")";
+    }
+    @Override
+    public String toExportString() {
+        return this.getTypeAbbrev() + "|" + (this.isDone() ? 1 : 0) + "|" + this.getName() + "|" + this.getStartDateTime() + "|" + this.getEndDateTime();
     }
 }
