@@ -25,7 +25,7 @@ public class Clovis {
         Scanner input = new Scanner(System.in);
         while (true) {
             String line = input.nextLine().trim();
-            String[] words = line.split("\s");
+            String[] words = line.split("\\s+");
             words = trimWords(words);
             String cmdType = words[0];
             printDivider();
@@ -45,6 +45,8 @@ public class Clovis {
                 try {
                     int taskNumMark = markEval(words, taskIndex);
                     tasks.get(taskNumMark - 1).setDone();
+                    System.out.println("Marked Task " + taskNumMark + " successfully!");
+                    System.out.println(tasks.get(taskNumMark - 1).toString());
                 } catch (ClovisException.InvalidInput e) {
                     System.out.println("Invalid input! It shouldn't be 0 or span outside of the active tasks!");
                     break;
@@ -62,6 +64,8 @@ public class Clovis {
                 try {
                     int taskNumUnmark = unmarkEval(words, taskIndex);
                     tasks.get(taskNumUnmark - 1).resetDone();
+                    System.out.println("Unmarked Task " + taskNumUnmark + " successfully!");
+                    System.out.println(tasks.get(taskNumUnmark - 1).toString());
                 } catch (ClovisException.InvalidInput e) {
                     System.out.println("Invalid input! It shouldn't be 0 or span outside of the active tasks!");
                     break;
