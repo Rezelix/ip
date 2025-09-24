@@ -1,4 +1,4 @@
-package Clovis.task;
+package clovis.task;
 
 public class Deadline extends Task{
     protected String dateTimeDeadline;

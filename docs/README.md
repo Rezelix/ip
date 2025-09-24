@@ -1,4 +1,4 @@
-# Clovis.Clovis User Guide
+# clovis.clovis User Guide
 
 // Product screenshot goes here
 

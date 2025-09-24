@@ -1,9 +1,9 @@
-package Clovis;
+package clovis;
 
-import Clovis.task.Task;
-import Clovis.task.Deadline;
-import Clovis.task.Todo;
-import Clovis.task.Event;
+import clovis.task.Task;
+import clovis.task.Deadline;
+import clovis.task.Todo;
+import clovis.task.Event;
 
 import java.util.Scanner;
 
@@ -11,13 +11,8 @@ public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
     static final int MAX_NUM_OF_TASKS = 100;
-    static final int CHARNUM_OF_DATELINE = 8;
-    static final int CHARNUM_OF_TODO = 4;
-    static final int CHARNUM_OF_BY = 3;
-    //static final int CHARNUM_OF_EVENT = 5;
 
     public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
-    //public static Clovis.ClovisException uncheckedException = new Clovis.ClovisException();
 
     public static void main(String[] args) {
         String logo = "  _____ _            _\n" +
@@ -183,7 +178,6 @@ public class Clovis {
         String output = "";
         for (int i = startIndex; i < endIndex; i++) {
             output += array[i] + " ";
-//            output = output.concat(array[i] + " ");
         }
         output = output.trim();
         return output;

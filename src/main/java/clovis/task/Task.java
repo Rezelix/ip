@@ -1,4 +1,4 @@
-package Clovis.task;
+package clovis.task;
 
 public class Task {
     private String name;
