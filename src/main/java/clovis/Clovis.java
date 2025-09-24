@@ -5,12 +5,19 @@ import clovis.task.Deadline;
 import clovis.task.Todo;
 import clovis.task.Event;
 
+import java.util.Arrays;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 
 public class Clovis {
     //Constants
     static final String DIVIDER = "__________________________________________________________\n";
     static final int MAX_NUM_OF_TASKS = 100;
+    static final String TASK_FILEPATH = "data/clovis.txt";
 
     public static Task[] tasks = new Task[MAX_NUM_OF_TASKS];
 
@@ -120,6 +127,32 @@ public class Clovis {
                     System.out.println("You are missing your task description or other parameters!");
                 }
                 break;
+            case "save":
+                if (taskIndex == 0) {
+                    System.out.println("No Tasks have been entered");
+                    break;
+                }
+                System.out.println("Saving tasks to file...");
+                try {
+                    createDataDir();
+                    FileWriter fw = new FileWriter(TASK_FILEPATH);
+                    for (int i = 0; tasks[i] != null; i++) {
+                        try {
+                            String outputStr = tasks[i].getTypeAbbrev() + "|" + (tasks[i].isDone() ? 1 : 0) + "|" + tasks[i].getName();
+                            fw.write(outputStr + System.lineSeparator());
+                        } catch (IOException e) {
+                            System.out.println("Failed to save task " + tasks[i].toString());
+                            break;
+                        }
+                        System.out.println("Successfully wrote task " + i + " : " + tasks[i].toString());
+                    }
+                    System.out.println("Tasks saved!");
+                    fw.close();
+                    break;
+                } catch (IOException e) {
+                    System.out.println("Error while writing tasks to file!");
+                    break;
+                }
             default:
                 try {
                     throw new ClovisException.InvalidInput();
@@ -131,6 +164,18 @@ public class Clovis {
             printDivider();
         }
 
+    }
+
+    private static void createDataDir() {
+        File dir = new File("data");
+        if (!dir.exists()) {
+            System.out.println("Data directory does not exist, I'm making it now");
+            if (dir.mkdir()) {
+                System.out.println("Created tasks directory @ " + dir.getAbsolutePath());
+            } else {
+                System.out.println("Failed to create tasks directory, try again");
+            }
+        }
     }
 
     public static void printTasks(Task[] tasks) {
