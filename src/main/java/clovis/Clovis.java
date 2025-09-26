@@ -165,10 +165,10 @@ public class Clovis {
     }
 
     public static void printDelAck(int delIndex, String delStr) {
-        System.out.println("Deleted the task: " + (delIndex + 1) + "." + delStr );
+        System.out.println("Deleted the task: " + (delIndex + 1) + "." + delStr);
     }
 
-    public static void printTotalInList(int numOfTasks) throws ClovisException.NoActiveTasks{
+    public static void printTotalInList(int numOfTasks) throws ClovisException.NoActiveTasks {
         checkForAnyTasks();
         System.out.println("You currently have " + numOfTasks + " tasks in your list");
     }
