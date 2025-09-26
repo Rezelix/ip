@@ -9,17 +9,12 @@ public class ClovisException{
         public InvalidInput() {
         }
     }
-    public static class TaskAlreadyMarked extends RuntimeException{
-        public TaskAlreadyMarked() {
-        }
-    }
-    public static class TaskAlreadyUnmarked extends RuntimeException{
-        public TaskAlreadyUnmarked() {
+    public static class TaskAlreadyMarkedCorrectly extends RuntimeException{
+        public TaskAlreadyMarkedCorrectly() {
         }
     }
     public static class MissingArgument extends RuntimeException{
         public MissingArgument() {
-
         }
     }
     public static class NoActiveTasks extends RuntimeException{
@@ -33,11 +28,6 @@ public class ClovisException{
 
     public static class MissingEventArguments extends RuntimeException{
         public MissingEventArguments() {
-        }
-    }
-
-    public static class MissingTaskDescription extends RuntimeException{
-        public MissingTaskDescription() {
         }
     }
 
