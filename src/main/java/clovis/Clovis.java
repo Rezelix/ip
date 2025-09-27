@@ -1,165 +1,165 @@
 package clovis;
 
-import clovis.task.Task;
-import clovis.task.Deadline;
-import clovis.task.Todo;
-import clovis.task.Event;
-import static clovis.Ui.*;
-import static clovis.Storage.*;
-import static clovis.Parser.*;
 
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
-
 public class Clovis {
+    private Storage storage;
+    private TaskList tasks;
+    private Ui ui;
 
-    public static ArrayList<Task> tasks = new ArrayList<>();
+    public Clovis(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        tasks = new TaskList();
+//        try {
+//            //tasks = new TaskList(storage.load());
+//            tasks = new TaskList();
+//        } catch (ClovisException e) {
+//            //ui.showLoadingError();
+//            tasks = new TaskList();
+//        }
+    }
 
     public static void main(String[] args) {
-        printClovisIntro();
-        Storage s = new Storage("data/clovis.txt");
-        int taskIndex = 0;
-        Scanner input = new Scanner(System.in);
+        new Clovis("data/tasks.txt").run();
+    }
+
+    public void run(){
+        ui.printClovisIntro();
         while (true) {
-            String line = input.nextLine().trim();
-            String words[] = splitWords(line);
-            String cmdType = words[0];
-            printDivider();
+            String line = ui.readCommand();
             try {
-                switch (cmdType) {
+                String[] words = Parser.splitWords(line);
+                String cmd = words[0];
+
+                switch (cmd) {
                 case "list":
-                    checkForAnyTasks();
-                    printTasks(tasks);
+                    handleList();
+                    break;
+                case "todo":
+                    handleTodo(words);
+                    break;
+                case "deadline":
+                    handleDeadline(words);
+                    break;
+                case "event":
+                    handleEvent(words);
+                    break;
+                case "save":
+                    handleSaving();
+                    break;
+                case "delete":
+                    handleDeletion(words);
                     break;
                 case "bye":
-                    System.out.println("Bye. Don't come again!");
-                    taskIndex = 0;
+                    ui.printMessage("Bye. Don't come again!");
                     System.exit(0);
                     break;
                 case "mark":
-                    checkForAnyTasks();
-                    checkForArgs(words);
-                    int taskNumMark = checkMarkingIndex(words);
-                    tasks.get(taskNumMark).setDone();
-                    System.out.println("Marked Task " + (taskNumMark + 1) + " successfully!");
-                    System.out.println(tasks.get(taskNumMark).toString());
+                    handleMarking(words);
                     break;
                 case "unmark":
-                    checkForAnyTasks();
-                    checkForArgs(words);
-                    int taskNumUnmark = checkUnmarkingIndex(words);
-                    tasks.get(taskNumUnmark).resetDone();
-                    System.out.println("Unmarked Task " + (taskNumUnmark + 1) + " successfully!");
-                    System.out.println(tasks.get(taskNumUnmark).toString());
-                    break;
-                case "deadline":
-                    checkForArgs(words);
-                    tasks.add(parseDeadline(words));
-                    printTaskCreation(tasks.get(taskIndex), taskIndex);
-                    taskIndex += 1;
-                    break;
-                case "todo":
-                    checkForArgs(words);
-                    tasks.add(parseTodo(words));
-                    printTaskCreation(tasks.get(taskIndex), taskIndex);
-                    taskIndex += 1;
-                    break;
-                case "event":
-                    checkForArgs(words);
-                    tasks.add(parseEvent(words));
-                    printTaskCreation(tasks.get(taskIndex), taskIndex);
-                    taskIndex += 1;
-                    break;
-                case "delete":
-                    checkForArgs(words);
-                    int delIndex = checkTargetIndex(words);
-                    String deletedToString = tasks.get(delIndex).toString();
-                    tasks.remove(delIndex);
-                    printDelAck(delIndex, deletedToString);
-                    taskIndex -= 1;
-                    break;
-                case "save":
-                    checkForAnyTasks();
-                    System.out.println("Saving tasks to file...");
-                    createDataDir();
-                    s.save(tasks);
-                    printSavedTasks();
+                    handleUnmarking(words);
                     break;
                 default:
                     throw new ClovisException.InvalidInput();
                 }
+
             } catch (ClovisException.ArgumentValueMissing e) {
-                System.out.println("Missing Task Description");
+                ui.printError("Missing Task Description");
+                ui.printDivider();
             } catch (ClovisException.InvalidInput e) {
-                System.out.println("Don't give me nonsense! Re-enter!");
+                ui.printError("Don't give me nonsense! Re-enter!");
+                ui.printDivider();
             } catch (ClovisException.TaskAlreadyMarkedCorrectly e) {
-                System.out.println("The task was already marked correctly!");
+                ui.printError("The task was already marked correctly!");
+                ui.printDivider();
             } catch (ClovisException.MissingArgument e) {
-                System.out.println("Missing argument!");
+                ui.printError("Missing argument!");
+                ui.printDivider();
             } catch (ClovisException.NoActiveTasks e) {
-                System.out.println("There are currently no active tasks!");
+                ui.printError("There are currently no active tasks!");
+                ui.printDivider();
             } catch (ClovisException.MissingDeadlineArgument e) {
-                System.out.println("Missing deadline!");
+                ui.printError("Missing deadline!");
+                ui.printDivider();
             } catch (ClovisException.MissingEventArguments e) {
-                System.out.println("Missing event from or to dates!");
+                ui.printError("Missing event from or to dates!");
+                ui.printDivider();
             } catch (ClovisException.TargetIndexOutOfRange e) {
-                System.out.println("Target index out of range!");
+                ui.printError("Target index out of range!");
+                ui.printDivider();
             } catch (IOException e) {
-                System.out.println("You're cooked");
+                ui.printError("You're cooked");
+                ui.printDivider();
             }
-            printDivider();
         }
 
     }
 
-    private static void checkForAnyTasks() throws ClovisException.NoActiveTasks{
-        if  (tasks.isEmpty()) {
-            throw new ClovisException.NoActiveTasks();
-        }
+    private void handleUnmarking(String[] words) {
+        Parser.checkForArgs(words);
+        tasks.checkForAnyTasks();
+        int unmarkIndex = Parser.getTargetIndex(words);
+        tasks.unmarkTask(unmarkIndex);
+        ui.printUnmarkAck(unmarkIndex, tasks.get(unmarkIndex));
+        ui.printDivider();
     }
 
-    private static void checkIndexOutOfScope(int index) throws ClovisException.TargetIndexOutOfRange {
-        if (index < 0 || index > tasks.size() - 1) {
-            throw new ClovisException.TargetIndexOutOfRange();
-        }
+    private void handleMarking(String[] words) {
+        Parser.checkForArgs(words);
+        tasks.checkForAnyTasks();
+        int markIndex = Parser.getTargetIndex(words);
+        tasks.markTask(markIndex);
+        ui.printMarkAck(markIndex,tasks.get(markIndex));
+        ui.printDivider();
     }
 
-    public static void checkForArgs(String[] words) throws ClovisException.MissingArgument {
-        if (words.length == 1) {
-            throw new ClovisException.MissingArgument();
-        }
+    private void handleDeletion(String[] words) {
+        Parser.checkForArgs(words);
+        tasks.checkForAnyTasks();
+        int delIndex = Integer.parseInt(words[1]) - 1;
+        String deletedTaskStr = tasks.get(delIndex).toString();
+        tasks.delete(delIndex);
+        ui.printTaskDeletion(deletedTaskStr, delIndex, tasks.size());
+        ui.printDivider();
     }
 
-    public static int checkMarkingIndex (String[] words) throws ClovisException.TaskAlreadyMarkedCorrectly {
-        int taskIndex = checkTargetIndex(words);
-        if (tasks.get(taskIndex).isDone()) {
-            throw new ClovisException.TaskAlreadyMarkedCorrectly();
-        }
-        return taskIndex;
+    private void handleSaving() throws IOException {
+        tasks.checkForAnyTasks();
+        ui.printSaving();
+        storage.createDataDir();
+        storage.save(tasks.getAllTasks());
+        ui.printSavedTasks();
+        ui.printDivider();
     }
 
-    public static int checkUnmarkingIndex (String[] words) throws ClovisException.TaskAlreadyMarkedCorrectly {
-        int taskIndex = checkTargetIndex(words);
-        if (!tasks.get(taskIndex).isDone()) {
-            throw new ClovisException.TaskAlreadyMarkedCorrectly();
-        }
-        return taskIndex;
+    private void handleEvent(String[] words) {
+        Parser.checkForArgs(words);
+        tasks.add(Parser.parseEvent(words));
+        ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
+        ui.printDivider();
     }
 
-    public static int checkTargetIndex(String[] words) throws ClovisException.TargetIndexOutOfRange{
-        int targetIndex = Integer.parseInt(words[1]) - 1;
-        checkIndexOutOfScope(targetIndex);
-        return targetIndex;
+    private void handleDeadline(String[] words) {
+        Parser.checkForArgs(words);
+        tasks.add(Parser.parseDeadline(words));
+        ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
+        ui.printDivider();
     }
 
+    private void handleTodo(String[] words) {
+        Parser.checkForArgs(words);
+        tasks.add(Parser.parseTodo(words));
+        ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
+        ui.printDivider();
+    }
 
-
-
-
-
+    private void handleList() {
+        tasks.checkForAnyTasks();
+        ui.printTasks(tasks.getAllTasks());
+        ui.printDivider();
+    }
 
 }

@@ -22,7 +22,7 @@ public class Storage {
         fw.close();
     }
 
-    public static void createDataDir() {
+    public void createDataDir() {
         File dir = new File("data");
         if (!dir.exists()) {
             if (!dir.mkdir()) {
@@ -31,6 +31,8 @@ public class Storage {
         }
     }
 
-    public static void load() {}
+    public ArrayList<Task> load() {
+        throw new ClovisException.NotYetImplemented();
+    }
 
 }

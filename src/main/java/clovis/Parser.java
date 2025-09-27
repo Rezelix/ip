@@ -19,10 +19,6 @@ public class Parser {
         throw new ClovisException.ArgumentValueMissing();
     }
 
-    public static Todo parseTodo (String[] words) {
-        return new Todo(assembleStr(words,1));
-    }
-
     public static String assembleStr(String[] array, int startIndex, int endIndex) {
         String output = "";
         for (int i = startIndex; i < endIndex; i++) {
@@ -39,6 +35,10 @@ public class Parser {
         }
         output = output.trim();
         return output;
+    }
+
+    public static Todo parseTodo (String[] words) {
+        return new Todo(assembleStr(words,1));
     }
 
     public static Deadline parseDeadline(String[] words) throws ClovisException.MissingDeadlineArgument {
@@ -68,4 +68,13 @@ public class Parser {
         return new Event(description,startTime,endTime);
     }
 
+    public static int getTargetIndex(String[] words) {
+        return Integer.parseInt(words[1]) - 1;
+    }
+
+    public static void checkForArgs(String[] words) throws ClovisException.MissingArgument {
+        if (words.length == 1) {
+            throw new ClovisException.MissingArgument();
+        }
+    }
 }

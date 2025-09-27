@@ -40,4 +40,8 @@ public class ClovisException{
         public DataDirCouldNotBeMade() {
         }
     }
+
+    public static class NotYetImplemented extends RuntimeException{
+        public NotYetImplemented() {}
+    }
 }
