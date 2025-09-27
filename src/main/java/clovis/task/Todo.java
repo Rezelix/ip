@@ -6,6 +6,14 @@ public class Todo extends Task{
         this.setType("T");
     }
 
+    public Todo(String name, boolean isDone) {
+        super(name);
+        this.setType("T");
+        if (isDone){
+            this.setDone();
+        }
+    }
+
     @Override
     public String toString() {
         return super.getStatus() + super.getName();
