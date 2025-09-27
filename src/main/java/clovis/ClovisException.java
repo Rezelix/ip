@@ -35,4 +35,9 @@ public class ClovisException{
         public TargetIndexOutOfRange() {
         }
     }
+
+    public static class DataDirCouldNotBeMade extends RuntimeException{
+        public DataDirCouldNotBeMade() {
+        }
+    }
 }

@@ -52,9 +52,7 @@ __________________________________________________________
 __________________________________________________________
 __________________________________________________________
 Saving tasks to file...
-Successfully wrote task 0 : [T][ ] wash dishes
-Successfully wrote task 1 : [D][X] water the plants (by: Tuesday 4pm)
-Tasks saved!
+Successfully saved all Tasks
 __________________________________________________________
 __________________________________________________________
 Bye. Don't come again!

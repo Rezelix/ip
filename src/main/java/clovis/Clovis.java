@@ -4,6 +4,8 @@ import clovis.task.Task;
 import clovis.task.Deadline;
 import clovis.task.Todo;
 import clovis.task.Event;
+import static clovis.Ui.*;
+import static clovis.Storage.*;
 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -13,12 +15,12 @@ import java.io.IOException;
 
 
 public class Clovis {
-    static final String DIVIDER = "__________________________________________________________\n";
-    static final String TASK_FILEPATH = "data/clovis.txt";
+
     public static ArrayList<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         printClovisIntro();
+        Storage s = new Storage("data/clovis.txt");
         int taskIndex = 0;
         Scanner input = new Scanner(System.in);
         while (true) {
@@ -57,19 +59,19 @@ public class Clovis {
                 case "deadline":
                     checkForArgs(words);
                     tasks.add(parseDeadline(words));
-                    printTaskCreation(taskIndex);
+                    printTaskCreation(tasks.get(taskIndex), taskIndex);
                     taskIndex += 1;
                     break;
                 case "todo":
                     checkForArgs(words);
                     tasks.add(parseTodo(words));
-                    printTaskCreation(taskIndex);
+                    printTaskCreation(tasks.get(taskIndex), taskIndex);
                     taskIndex += 1;
                     break;
                 case "event":
                     checkForArgs(words);
                     tasks.add(parseEvent(words));
-                    printTaskCreation(taskIndex);
+                    printTaskCreation(tasks.get(taskIndex), taskIndex);
                     taskIndex += 1;
                     break;
                 case "delete":
@@ -83,14 +85,10 @@ public class Clovis {
                 case "save":
                     checkForAnyTasks();
                     System.out.println("Saving tasks to file...");
-                    try {
-                        createDataDir();
-                        writeSaveFile();
-                        break;
-                    } catch (IOException e) {
-                        System.out.println("Error while writing tasks to file!");
-                        break;
-                    }
+                    createDataDir();
+                    s.save(tasks);
+                    printSavedTasks();
+                    break;
                 default:
                     throw new ClovisException.InvalidInput();
                 }
@@ -110,6 +108,8 @@ public class Clovis {
                 System.out.println("Missing event from or to dates!");
             } catch (ClovisException.TargetIndexOutOfRange e) {
                 System.out.println("Target index out of range!");
+            } catch (IOException e) {
+                System.out.println("You're cooked");
             }
             printDivider();
         }
@@ -122,56 +122,15 @@ public class Clovis {
         }
     }
 
-    private static void writeSaveFile() throws IOException {
-        FileWriter fw = new FileWriter(TASK_FILEPATH);
-        for (int i = 0; i < tasks.size(); i++) {
-            fw.write(tasks.get(i).toExportString() + System.lineSeparator());
-            System.out.println("Successfully wrote task " + i + " : " + tasks.get(i).toString());
-        }
-        System.out.println("Tasks saved!");
-        fw.close();
-    }
 
-    private static void printTaskCreation(int taskIndex) {
-        printAck(tasks.get(taskIndex).toString());
-        printTotalInList(taskIndex + 1);
-    }
 
-    public static void printTasks(ArrayList<Task>  tasks) throws ClovisException.NoActiveTasks{
-        checkForAnyTasks();
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(i + 1 + "." + tasks.get(i).toString());
-        }
-    }
 
-    private static void printClovisIntro() {
-        String logo = "  _____ _            _\n" +
-                " / ____| |          (_)\n" +
-                "| |    | | _____   ___ ___\n" +
-                "| |    | |/ _ \\ \\ / / / __|\n" +
-                "| |____| | (_) \\ V /| \\__ \\\n" +
-                " \\_____|_|\\___/ \\_/ |_|___/";
-        System.out.println("Hello from\n" + logo);
-        System.out.println("What do you want from me this time?");
-        printDivider();
-    }
 
-    public static void printDivider() {
-        System.out.print(DIVIDER);
-    }
 
-    public static void printAck(String line) {
-        System.out.println("added: " + line);
-    }
 
-    public static void printDelAck(int delIndex, String delStr) {
-        System.out.println("Deleted the task: " + (delIndex + 1) + "." + delStr);
-    }
 
-    public static void printTotalInList(int numOfTasks) throws ClovisException.NoActiveTasks {
-        checkForAnyTasks();
-        System.out.println("You currently have " + numOfTasks + " tasks in your list");
-    }
+
+
 
     public static String[] trimWords(String[] words) {
         String[] output = new String[words.length];
@@ -181,17 +140,6 @@ public class Clovis {
         return output;
     }
 
-    private static void createDataDir() {
-        File dir = new File("data");
-        if (!dir.exists()) {
-            System.out.println("Data directory does not exist, I'm making it now");
-            if (dir.mkdir()) {
-                System.out.println("Created tasks directory @ " + dir.getAbsolutePath());
-            } else {
-                System.out.println("Failed to create tasks directory, try again");
-            }
-        }
-    }
 
     public static int findParamIndex(String[] words, String keyword) throws ClovisException.ArgumentValueMissing {
         for (int i = 1; i < words.length; i++) {
