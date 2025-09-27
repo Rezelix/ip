@@ -1,6 +1,7 @@
 package clovis;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Clovis {
@@ -8,10 +9,10 @@ public class Clovis {
     private TaskList tasks;
     private Ui ui;
 
-    public Clovis(String filePath) {
+    public Clovis(String filePath) throws FileNotFoundException {
         ui = new Ui();
         storage = new Storage(filePath);
-        tasks = new TaskList();
+        tasks = new TaskList(storage.load());
 //        try {
 //            //tasks = new TaskList(storage.load());
 //            tasks = new TaskList();
@@ -21,8 +22,12 @@ public class Clovis {
 //        }
     }
 
-    public static void main(String[] args) {
-        new Clovis("data/tasks.txt").run();
+    public static void main(String[] args) throws FileNotFoundException {
+        try {
+            new Clovis("data/tasks.txt").run();
+        } catch (FileNotFoundException e) {
+            System.out.println("Cooked");
+        }
     }
 
     public void run(){
@@ -30,7 +35,7 @@ public class Clovis {
         while (true) {
             String line = ui.readCommand();
             try {
-                String[] words = Parser.splitWords(line);
+                String[] words = Parser.splitWords(line,"\\s+");
                 String cmd = words[0];
 
                 switch (cmd) {
@@ -61,6 +66,10 @@ public class Clovis {
                     break;
                 case "unmark":
                     handleUnmarking(words);
+                    break;
+                case "deleteAll":
+                    tasks.deleteAllTasks();
+                    ui.printDeleteAll();
                     break;
                 default:
                     throw new ClovisException.InvalidInput();

@@ -5,8 +5,8 @@ import clovis.task.Event;
 import clovis.task.Todo;
 
 public class Parser {
-    public static String[] splitWords(String line) {
-        return line.trim().split("\\s+");
+    public static String[] splitWords(String line, String regex) {
+        return line.trim().split(regex);
     }
 
     public static int findParamIndex(String[] words, String keyword) throws ClovisException.ArgumentValueMissing {
@@ -77,4 +77,5 @@ public class Parser {
             throw new ClovisException.MissingArgument();
         }
     }
+
 }

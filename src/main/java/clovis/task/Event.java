@@ -11,6 +11,16 @@ public class Event extends Task{
         this.setType("E");
     }
 
+    public Event(String name,boolean isDone, String startDateTime, String endDateTime) {
+        super(name);
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.setType("E");
+        if (isDone){
+            this.setDone();
+        }
+    }
+
     public String getStartDateTime() {
         return this.startDateTime;
     }
