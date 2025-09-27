@@ -1,11 +1,16 @@
 package clovis;
 
 import clovis.task.Task;
+import clovis.task.Todo;
+import clovis.task.Deadline;
+import clovis.task.Event;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Storage {
     private final String filepath;
@@ -31,8 +36,35 @@ public class Storage {
         }
     }
 
-    public ArrayList<Task> load() {
-        throw new ClovisException.NotYetImplemented();
+    public ArrayList<Task> load() throws FileNotFoundException {
+        File file = new File(this.filepath);
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Failed to create file");
+            }
+        }
+        Scanner sc = new Scanner(file);
+        String[] words;
+        ArrayList<Task> tasks = new ArrayList<>();
+        while (sc.hasNextLine()) {
+             words = sc.nextLine().trim().split("\\|");
+             boolean taskIsDone = Boolean.parseBoolean(words[1]);
+             String taskName = words[2];
+             switch (words[0]) {
+             case "T":
+                 tasks.add(new Todo(taskName,taskIsDone));
+                 break;
+             case "D":
+                 tasks.add(new Deadline(taskName,taskIsDone,words[3]));
+                 break;
+             case "E":
+                 tasks.add(new Event(taskName,taskIsDone,words[3],words[4]));
+                 break;
+             }
+        }
+        return tasks;
     }
 
 }

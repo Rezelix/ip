@@ -1,3 +1,6 @@
+list
+deleteAll
+list
 todo wash dishes
 todo hang clothes
 deadline water the plants /by Tuesday 4pm

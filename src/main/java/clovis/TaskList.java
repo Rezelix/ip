@@ -65,4 +65,8 @@ public class TaskList {
             throw new ClovisException.TargetIndexOutOfRange();
         }
     }
+
+    public void deleteAllTasks() {
+        tasks.clear();
+    }
 }

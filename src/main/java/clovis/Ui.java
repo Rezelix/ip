@@ -90,4 +90,8 @@ public class Ui {
         System.out.println("Unmarked Task " + (unmarkTaskIndex+1) + " successfully!");
         printTask(unmarkTask);
     }
+
+    public void printDeleteAll() {
+        System.out.println("Deleted all Tasks");
+    }
 }
