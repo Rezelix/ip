@@ -37,17 +37,15 @@ public class Storage {
     }
 
     public ArrayList<Task> load() throws FileNotFoundException {
-        File file = new File(this.filepath);
-        if(!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Failed to create file");
-            }
-        }
+        File file = getFile();
         Scanner sc = new Scanner(file);
-        String[] words;
         ArrayList<Task> tasks = new ArrayList<>();
+        arrayListConstructor(sc, tasks);
+        return tasks;
+    }
+
+    public static void arrayListConstructor(Scanner sc, ArrayList<Task> tasks) {
+        String[] words;
         while (sc.hasNextLine()) {
              words = sc.nextLine().trim().split("\\|");
              boolean taskIsDone = Boolean.parseBoolean(words[1]);
@@ -64,7 +62,18 @@ public class Storage {
                  break;
              }
         }
-        return tasks;
+    }
+
+    private File getFile() {
+        File file = new File(this.filepath);
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Failed to create file");
+            }
+        }
+        return file;
     }
 
 }

@@ -7,6 +7,12 @@ Hello from
  \_____|_|\___/ \_/ |_|___/
 What do you want from me this time?
 __________________________________________________________
+1.[T][ ] wash dishes
+2.[D][ ] water the plants (by: Tuesday 4pm)
+__________________________________________________________
+Deleted all Tasks
+There are currently no active tasks!
+__________________________________________________________
 added: [T][ ] wash dishes
 You currently have 1 tasks in your list
 __________________________________________________________

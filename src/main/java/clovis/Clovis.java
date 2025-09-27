@@ -13,13 +13,6 @@ public class Clovis {
         ui = new Ui();
         storage = new Storage(filePath);
         tasks = new TaskList(storage.load());
-//        try {
-//            //tasks = new TaskList(storage.load());
-//            tasks = new TaskList();
-//        } catch (ClovisException e) {
-//            //ui.showLoadingError();
-//            tasks = new TaskList();
-//        }
     }
 
     public static void main(String[] args) throws FileNotFoundException {
