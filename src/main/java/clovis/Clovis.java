@@ -6,6 +6,7 @@ import clovis.task.Todo;
 import clovis.task.Event;
 import static clovis.Ui.*;
 import static clovis.Storage.*;
+import static clovis.Parser.*;
 
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -25,8 +26,7 @@ public class Clovis {
         Scanner input = new Scanner(System.in);
         while (true) {
             String line = input.nextLine().trim();
-            String[] words = line.split("\\s+");
-            words = trimWords(words);
+            String words[] = splitWords(line);
             String cmdType = words[0];
             printDivider();
             try {
@@ -122,35 +122,6 @@ public class Clovis {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-    public static String[] trimWords(String[] words) {
-        String[] output = new String[words.length];
-        for (int i = 0; i < words.length; i++) {
-            output[i] = words[i].trim();
-        }
-        return output;
-    }
-
-
-    public static int findParamIndex(String[] words, String keyword) throws ClovisException.ArgumentValueMissing {
-        for (int i = 1; i < words.length; i++) {
-            if (words[i].equals(keyword)) {
-                return i;
-            }
-        }
-        //TODO add keyword to show which argument was missing
-        throw new ClovisException.ArgumentValueMissing();
-    }
-
     private static void checkIndexOutOfScope(int index) throws ClovisException.TargetIndexOutOfRange {
         if (index < 0 || index > tasks.size() - 1) {
             throw new ClovisException.TargetIndexOutOfRange();
@@ -161,24 +132,6 @@ public class Clovis {
         if (words.length == 1) {
             throw new ClovisException.MissingArgument();
         }
-    }
-
-    public static String assembleStrFromArrIndexes(String[] array, int startIndex, int endIndex) {
-        String output = "";
-        for (int i = startIndex; i < endIndex; i++) {
-            output += array[i] + " ";
-        }
-        output = output.trim();
-        return output;
-    }
-
-    public static String assembleStrFromArrIndexes(String[] array, int startIndex) {
-        String output = "";
-        for (int i = startIndex; i < array.length; i++) {
-            output += array[i] + " ";
-        }
-        output = output.trim();
-        return output;
     }
 
     public static int checkMarkingIndex (String[] words) throws ClovisException.TaskAlreadyMarkedCorrectly {
@@ -203,35 +156,10 @@ public class Clovis {
         return targetIndex;
     }
 
-    public static Event parseEvent(String[] words) throws ClovisException.MissingEventArguments {
-        int fromIndex;
-        int toIndex;
-        try {
-            fromIndex = findParamIndex(words, "/from");
-            toIndex = findParamIndex(words, "/to");
-        } catch (ClovisException.ArgumentValueMissing e) {
-            throw new ClovisException.MissingEventArguments();
-        }
-        String description = assembleStrFromArrIndexes(words, 1, fromIndex);
-        String startTime = assembleStrFromArrIndexes(words, fromIndex + 1, toIndex);
-        String endTime = assembleStrFromArrIndexes(words, toIndex + 1);
-        return new Event(description,startTime,endTime);
-    }
 
-    public static Deadline parseDeadline(String[] words) throws ClovisException.MissingDeadlineArgument {
-        int dateIndex;
-        try {
-            dateIndex = findParamIndex(words, "/by");
-        } catch (ClovisException.ArgumentValueMissing e) {
-            throw new ClovisException.MissingDeadlineArgument();
-        }
-        String description = assembleStrFromArrIndexes(words,1,dateIndex);
-        String deadlineTime = assembleStrFromArrIndexes(words,dateIndex+1);
-        return new Deadline(description,deadlineTime);
-    }
 
-    public static Todo parseTodo (String[] words) {
-        return new Todo(assembleStrFromArrIndexes(words,1));
-    }
+
+
+
 
 }
