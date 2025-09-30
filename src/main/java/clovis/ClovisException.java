@@ -44,4 +44,8 @@ public class ClovisException{
     public static class NotYetImplemented extends RuntimeException{
         public NotYetImplemented() {}
     }
+
+    public static class KeywordNotFound extends RuntimeException{
+        public KeywordNotFound() {}
+    }
 }
