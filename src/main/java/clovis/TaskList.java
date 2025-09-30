@@ -69,4 +69,14 @@ public class TaskList {
     public void deleteAllTasks() {
         tasks.clear();
     }
+
+    public ArrayList<Task> find(String keyword) throws ClovisException.KeywordNotFound {
+        ArrayList<Task> foundKeyword = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getName().contains(keyword)) {
+                foundKeyword.add(task);
+            }
+        }
+        return foundKeyword;
+    }
 }

@@ -7,7 +7,6 @@ public class Task {
     public Task(String name) {
         this.name = name;
         this.isDone = false;
-        this.type = type;
     }
     public String getName() {
         return name;
@@ -45,5 +44,4 @@ public class Task {
     public String toExportString() {
         return "This task's class does not have an overridden toExportString()";
     }
-
 }

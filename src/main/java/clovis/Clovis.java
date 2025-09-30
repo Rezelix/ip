@@ -64,37 +64,33 @@ public class Clovis {
                     tasks.deleteAllTasks();
                     ui.printDeleteAll();
                     break;
+                case "find":
+                    handleFindKeyword(words);
+                    break;
                 default:
                     throw new ClovisException.InvalidInput();
                 }
+                ui.printDivider();
 
             } catch (ClovisException.ArgumentValueMissing e) {
                 ui.printError("Missing Task Description");
-                ui.printDivider();
             } catch (ClovisException.InvalidInput e) {
                 ui.printError("Don't give me nonsense! Re-enter!");
                 ui.printDivider();
             } catch (ClovisException.TaskAlreadyMarkedCorrectly e) {
                 ui.printError("The task was already marked correctly!");
-                ui.printDivider();
             } catch (ClovisException.MissingArgument e) {
                 ui.printError("Missing argument!");
-                ui.printDivider();
             } catch (ClovisException.NoActiveTasks e) {
                 ui.printError("There are currently no active tasks!");
-                ui.printDivider();
             } catch (ClovisException.MissingDeadlineArgument e) {
                 ui.printError("Missing deadline!");
-                ui.printDivider();
             } catch (ClovisException.MissingEventArguments e) {
                 ui.printError("Missing event from or to dates!");
-                ui.printDivider();
             } catch (ClovisException.TargetIndexOutOfRange e) {
                 ui.printError("Target index out of range!");
-                ui.printDivider();
             } catch (IOException e) {
                 ui.printError("You're cooked");
-                ui.printDivider();
             }
         }
 
@@ -106,7 +102,6 @@ public class Clovis {
         int unmarkIndex = Parser.getTargetIndex(words);
         tasks.unmarkTask(unmarkIndex);
         ui.printUnmarkAck(unmarkIndex, tasks.get(unmarkIndex));
-        ui.printDivider();
     }
 
     private void handleMarking(String[] words) {
@@ -115,7 +110,6 @@ public class Clovis {
         int markIndex = Parser.getTargetIndex(words);
         tasks.markTask(markIndex);
         ui.printMarkAck(markIndex,tasks.get(markIndex));
-        ui.printDivider();
     }
 
     private void handleDeletion(String[] words) {
@@ -125,7 +119,6 @@ public class Clovis {
         String deletedTaskStr = tasks.get(delIndex).toString();
         tasks.delete(delIndex);
         ui.printTaskDeletion(deletedTaskStr, delIndex, tasks.size());
-        ui.printDivider();
     }
 
     private void handleSaving() throws IOException {
@@ -134,34 +127,34 @@ public class Clovis {
         storage.createDataDir();
         storage.save(tasks.getAllTasks());
         ui.printSavedTasks();
-        ui.printDivider();
     }
 
     private void handleEvent(String[] words) {
         Parser.checkForArgs(words);
         tasks.add(Parser.parseEvent(words));
         ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
-        ui.printDivider();
     }
 
     private void handleDeadline(String[] words) {
         Parser.checkForArgs(words);
         tasks.add(Parser.parseDeadline(words));
         ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
-        ui.printDivider();
     }
 
     private void handleTodo(String[] words) {
         Parser.checkForArgs(words);
         tasks.add(Parser.parseTodo(words));
         ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
-        ui.printDivider();
     }
 
     private void handleList() {
         tasks.checkForAnyTasks();
         ui.printTasks(tasks.getAllTasks());
-        ui.printDivider();
+    }
+
+    private void handleFindKeyword(String[] words) {
+        Parser.checkForArgs(words);
+        ui.printTasks(tasks.find(words[1]));
     }
 
 }
