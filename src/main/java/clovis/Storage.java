@@ -1,6 +1,6 @@
 package clovis;
 
-import clovis.Exceptions.ClovisException;
+import clovis.Exceptions.*;
 import clovis.task.Task;
 import clovis.task.Todo;
 import clovis.task.Deadline;
@@ -28,16 +28,16 @@ public class Storage {
         fw.close();
     }
 
-    public void createDataDir() {
+    public void createDataDir() throws DataDirCouldNotBeMade {
         File dir = new File("data");
         if (!dir.exists()) {
             if (!dir.mkdir()) {
-                throw new ClovisException.DataDirCouldNotBeMade();
+                throw new DataDirCouldNotBeMade();
             }
         }
     }
 
-    public ArrayList<Task> load() throws FileNotFoundException {
+    public ArrayList<Task> load() throws DataDirCouldNotBeMade {
         File file = getFile();
         Scanner sc = null;
         ArrayList<Task> tasks = new ArrayList<>();

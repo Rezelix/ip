@@ -31,10 +31,12 @@ public class Event extends Task{
 
     @Override
     public String toString() {
-        return this.getStatus() + this.getName() + " (from: " + this.getStartDateTime() + " to: " + this.getEndDateTime() + ")";
+        return this.getStatus() + this.getName() + " (from: " + this.getStartDateTime()
+                + " to: " + this.getEndDateTime() + ")";
     }
     @Override
     public String toExportString() {
-        return this.getTypeAbbrev() + "|" + (this.isDone() ? 1 : 0) + "|" + this.getName() + "|" + this.getStartDateTime() + "|" + this.getEndDateTime();
+        return this.getTypeAbbrev() + "|" + (this.isDone() ? 1 : 0) + "|" + this.getName()
+                + "|" + this.getStartDateTime() + "|" + this.getEndDateTime();
     }
 }
