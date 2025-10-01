@@ -1,5 +1,5 @@
 package clovis;
-import clovis.Exceptions.*;
+import clovis.exceptions.*;
 import clovis.task.Deadline;
 import clovis.task.Event;
 import clovis.task.Todo;

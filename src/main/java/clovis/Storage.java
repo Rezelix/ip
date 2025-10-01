@@ -1,6 +1,6 @@
 package clovis;
 
-import clovis.Exceptions.*;
+import clovis.exceptions.DataDirCouldNotBeMade;
 import clovis.task.Task;
 import clovis.task.Todo;
 import clovis.task.Deadline;
@@ -15,9 +15,11 @@ import java.util.Scanner;
 
 public class Storage {
     private final String filepath;
+    private Ui ui;
 
-    public Storage(String filepath) {
+    public Storage(String filepath, Ui ui) {
         this.filepath = filepath;
+        this.ui = ui;
     }
 
     public void save(ArrayList<Task> tasks) throws IOException {
@@ -76,8 +78,8 @@ public class Storage {
         if(!file.exists()) {
             try {
                 file.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Failed to create file");
+            } catch (IOException | SecurityException e) {
+                ui.printError("Failed to create file");
             }
         }
         return file;

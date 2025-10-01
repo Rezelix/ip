@@ -1,4 +1,4 @@
-package clovis.Exceptions;
+package clovis.exceptions;
 
 public class MissingEventArguments extends Exception {
     public String getMessage() {

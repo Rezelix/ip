@@ -1,7 +1,15 @@
 package clovis;
 
-
-import clovis.Exceptions.*;
+import clovis.exceptions.ArgumentValueMissing;
+import clovis.exceptions.DataDirCouldNotBeMade;
+import clovis.exceptions.InvalidInput;
+import clovis.exceptions.KeywordNotFound;
+import clovis.exceptions.MissingArgument;
+import clovis.exceptions.MissingDeadlineArgument;
+import clovis.exceptions.MissingEventArguments;
+import clovis.exceptions.NoActiveTasks;
+import clovis.exceptions.TargetIndexOutOfRange;
+import clovis.exceptions.TaskAlreadyMarkedCorrectly;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,12 +22,12 @@ public class Clovis {
 
     public Clovis(String filePath) throws FileNotFoundException, DataDirCouldNotBeMade {
         ui = new Ui();
-        storage = new Storage(filePath);
+        storage = new Storage(filePath, ui);
         tasks = new TaskList(storage.load());
         parser = new Parser(ui,tasks,storage);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args){
         try {
             new Clovis("data/tasks.txt").run();
         } catch (FileNotFoundException | DataDirCouldNotBeMade e) {

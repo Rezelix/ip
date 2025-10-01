@@ -1,4 +1,4 @@
-package clovis.Exceptions;
+package clovis.exceptions;
 
 public class KeywordNotFound extends Exception {
     public String getMessage() {

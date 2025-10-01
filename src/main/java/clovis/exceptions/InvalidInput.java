@@ -1,4 +1,4 @@
-package clovis.Exceptions;
+package clovis.exceptions;
 
 public class InvalidInput extends Exception {
     public String getMessage() {

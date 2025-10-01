@@ -1,6 +1,6 @@
 package clovis;
 
-import clovis.Exceptions.*;
+import clovis.exceptions.*;
 import java.util.ArrayList;
 
 import clovis.task.Task;

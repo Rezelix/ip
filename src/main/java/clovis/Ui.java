@@ -1,7 +1,7 @@
 package clovis;
 
 import clovis.task.Task;
-import clovis.Exceptions.NoActiveTasks;
+import clovis.exceptions.NoActiveTasks;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -10,7 +10,7 @@ public class Ui {
     private static final String DIVIDER = "__________________________________________________________\n";
     private final Scanner scanner;
 
-    public static void printClovisIntro() {
+    public void printClovisIntro() {
         String logo = "  _____ _            _\n" +
                 " / ____| |          (_)\n" +
                 "| |    | | _____   ___ ___\n" +
@@ -30,41 +30,41 @@ public class Ui {
         return scanner.nextLine();
     }
 
-    public static void printDivider() {
+    public void printDivider() {
         System.out.print(DIVIDER);
     }
 
-    public static void printAck(String line) {
+    public void printAck(String line) {
         System.out.println("added: " + line);
     }
 
-    public static void printDelAck(int delIndex, String delStr) {
+    public void printDelAck(int delIndex, String delStr) {
         System.out.println("Deleted the task: " + (delIndex + 1) + "." + delStr);
     }
 
-    public static void printSaving() {
+    public void printSaving() {
         System.out.println("Saving tasks to file...");
     }
 
-    public static void printSavedTasks() {
+    public void printSavedTasks() {
         System.out.println("Successfully saved all Tasks");
     }
 
-    public static void printTotalInList(int numOfTasks) throws NoActiveTasks {
+    public void printTotalInList(int numOfTasks) throws NoActiveTasks {
         System.out.println("You currently have " + numOfTasks + " tasks in your list");
     }
 
-    public static void printTaskCreation(Task task,int taskIndex) throws NoActiveTasks {
+    public void printTaskCreation(Task task,int taskIndex) throws NoActiveTasks {
         printAck(task.toString());
         printTotalInList(taskIndex);
     }
 
-    public static void printTaskDeletion(String deletedTask,int delIndex, int tasksIndex) throws NoActiveTasks {
+    public void printTaskDeletion(String deletedTask,int delIndex, int tasksIndex) throws NoActiveTasks {
         printDelAck(delIndex,deletedTask);
         printTotalInList(tasksIndex);
     }
 
-    public static void printTasks(ArrayList<Task> tasks){
+    public void printTasks(ArrayList<Task> tasks){
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(i + 1 + "." + tasks.get(i).toString());
         }
