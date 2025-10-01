@@ -1,5 +1,6 @@
 package clovis;
 
+import clovis.Exceptions.ClovisException;
 import clovis.task.Task;
 
 import java.util.ArrayList;

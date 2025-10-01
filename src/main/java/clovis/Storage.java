@@ -1,5 +1,6 @@
 package clovis;
 
+import clovis.Exceptions.ClovisException;
 import clovis.task.Task;
 import clovis.task.Todo;
 import clovis.task.Deadline;
@@ -38,9 +39,15 @@ public class Storage {
 
     public ArrayList<Task> load() throws FileNotFoundException {
         File file = getFile();
-        Scanner sc = new Scanner(file);
+        Scanner sc = null;
         ArrayList<Task> tasks = new ArrayList<>();
-        arrayListConstructor(sc, tasks);
+        try {
+            sc = new Scanner(file);
+            arrayListConstructor(sc, tasks);
+        } catch (FileNotFoundException e) {
+            createDataDir();
+            return tasks;
+        }
         return tasks;
     }
 
