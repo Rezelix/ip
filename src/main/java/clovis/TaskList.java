@@ -1,8 +1,8 @@
 package clovis;
 
+import clovis.Exceptions.*;
 import java.util.ArrayList;
 
-import clovis.Exceptions.ClovisException;
 import clovis.task.Task;
 
 public class TaskList {
@@ -19,10 +19,10 @@ public class TaskList {
     public void add(Task task) {
         tasks.add(task);
     }
-    public void delete(int index) {
+    public void delete(int index) throws TargetIndexOutOfRange {
         tasks.remove(get(index));
     }
-    public Task get(int index) throws ClovisException.TargetIndexOutOfRange {
+    public Task get(int index) throws TargetIndexOutOfRange {
         return tasks.get(index);
     }
     public int size() {
@@ -34,37 +34,37 @@ public class TaskList {
     public ArrayList<Task> getAllTasks() {
         return tasks;
     }
-    public void checkForAnyTasks() throws ClovisException.NoActiveTasks{
+    public void checkForAnyTasks() throws NoActiveTasks{
         if  (tasks.isEmpty()) {
-            throw new ClovisException.NoActiveTasks();
+            throw new NoActiveTasks();
         }
     }
-    public void markTask (int index) throws ClovisException.TaskAlreadyMarkedCorrectly, ClovisException.TargetIndexOutOfRange{
+    public void markTask (int index) throws TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange{
         checkIndexOutOfScope(index);
         checkMarkingIndex(index);
         tasks.get(index).setDone();
     }
-    public void unmarkTask (int index) throws ClovisException.TaskAlreadyMarkedCorrectly, ClovisException.TargetIndexOutOfRange{
+    public void unmarkTask (int index) throws TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange{
         checkIndexOutOfScope(index);
         checkUnmarkingIndex(index);
         tasks.get(index).resetDone();
     }
 
-    public void checkMarkingIndex (int taskIndex) throws ClovisException.TaskAlreadyMarkedCorrectly, ClovisException.TargetIndexOutOfRange{
+    public void checkMarkingIndex (int taskIndex) throws TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange{
         if (tasks.get(taskIndex).isDone()) {
-            throw new ClovisException.TaskAlreadyMarkedCorrectly();
+            throw new TaskAlreadyMarkedCorrectly();
         }
     }
 
-    public void checkUnmarkingIndex (int taskIndex) throws ClovisException.TaskAlreadyMarkedCorrectly, ClovisException.TargetIndexOutOfRange{
+    public void checkUnmarkingIndex (int taskIndex) throws TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange{
         if (!tasks.get(taskIndex).isDone()) {
-            throw new ClovisException.TaskAlreadyMarkedCorrectly();
+            throw new TaskAlreadyMarkedCorrectly();
         }
     }
 
-    public void checkIndexOutOfScope(int index) throws ClovisException.TargetIndexOutOfRange {
+    public void checkIndexOutOfScope(int index) throws TargetIndexOutOfRange {
         if (index < 0 || index > size() - 1) {
-            throw new ClovisException.TargetIndexOutOfRange();
+            throw new TargetIndexOutOfRange();
         }
     }
 
@@ -72,7 +72,7 @@ public class TaskList {
         tasks.clear();
     }
 
-    public ArrayList<Task> find(String keyword) throws ClovisException.KeywordNotFound {
+    public ArrayList<Task> find(String keyword) throws KeywordNotFound {
         ArrayList<Task> foundKeyword = new ArrayList<>();
         for (Task task : tasks) {
             if (task.getName().contains(keyword)) {

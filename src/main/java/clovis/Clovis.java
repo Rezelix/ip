@@ -1,7 +1,7 @@
 package clovis;
 
 
-import clovis.Exceptions.ClovisException;
+import clovis.Exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public class Clovis {
     private Ui ui;
     private Parser parser;
 
-    public Clovis(String filePath) throws FileNotFoundException {
+    public Clovis(String filePath) throws FileNotFoundException, DataDirCouldNotBeMade {
         ui = new Ui();
         storage = new Storage(filePath);
         tasks = new TaskList(storage.load());
@@ -22,42 +22,28 @@ public class Clovis {
     public static void main(String[] args) throws FileNotFoundException {
         try {
             new Clovis("data/tasks.txt").run();
-        } catch (FileNotFoundException e) {
-            System.out.println("Cooked");
+        } catch (FileNotFoundException | DataDirCouldNotBeMade e) {
+            System.out.println(e.getMessage());
         }
     }
 
     public void run(){
         ui.printClovisIntro();
-        while (true) {
-            String line = ui.readCommand();
+        String line = ui.readCommand();
+        while(!line.contains("bye")) {
+            String[] words = Parser.splitWords(line, "\\s+");
+            String cmd = words[0];
             try {
-                String[] words = Parser.splitWords(line,"\\s+");
-                String cmd = words[0];
-                parser.switchCase(cmd,words);
+                parser.switchCase(cmd, words);
                 ui.printDivider();
-
-            } catch (ClovisException.ArgumentValueMissing e) {
-                ui.printError("Missing Task Description");
-            } catch (ClovisException.InvalidInput e) {
-                ui.printError("Don't give me nonsense! Re-enter!");
+            } catch (ArgumentValueMissing | InvalidInput | TaskAlreadyMarkedCorrectly | MissingArgument |
+                     NoActiveTasks | MissingDeadlineArgument | MissingEventArguments | TargetIndexOutOfRange |
+                     DataDirCouldNotBeMade | KeywordNotFound | IOException e) {
+                ui.printError(e.getMessage());
                 ui.printDivider();
-            } catch (ClovisException.TaskAlreadyMarkedCorrectly e) {
-                ui.printError("The task was already marked correctly!");
-            } catch (ClovisException.MissingArgument e) {
-                ui.printError("Missing argument!");
-            } catch (ClovisException.NoActiveTasks e) {
-                ui.printError("There are currently no active tasks!");
-            } catch (ClovisException.MissingDeadlineArgument e) {
-                ui.printError("Missing deadline!");
-            } catch (ClovisException.MissingEventArguments e) {
-                ui.printError("Missing event from or to dates!");
-            } catch (ClovisException.TargetIndexOutOfRange e) {
-                ui.printError("Target index out of range!");
-            } catch (IOException e) {
-                ui.printError("You're cooked");
             }
+            line = ui.readCommand();
         }
-
+        ui.printBye();
     }
 }

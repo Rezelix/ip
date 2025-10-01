@@ -1,6 +1,5 @@
 package clovis;
-
-import clovis.Exceptions.ClovisException;
+import clovis.Exceptions.*;
 import clovis.task.Deadline;
 import clovis.task.Event;
 import clovis.task.Todo;
@@ -21,14 +20,13 @@ public class Parser {
         return line.trim().split(regex);
     }
 
-    public static int findParamIndex(String[] words, String keyword) throws ClovisException.ArgumentValueMissing {
+    public static int findParamIndex(String[] words, String keyword) throws ArgumentValueMissing {
         for (int i = 1; i < words.length; i++) {
             if (words[i].equals(keyword)) {
                 return i;
             }
         }
-        //TODO add keyword to show which argument was missing
-        throw new ClovisException.ArgumentValueMissing();
+        throw new ArgumentValueMissing();
     }
 
     public static String assembleStr(String[] array, int startIndex, int endIndex) {
@@ -53,26 +51,26 @@ public class Parser {
         return new Todo(assembleStr(words,1));
     }
 
-    public static Deadline parseDeadline(String[] words) throws ClovisException.MissingDeadlineArgument {
+    public static Deadline parseDeadline(String[] words) throws MissingDeadlineArgument {
         int dateIndex;
         try {
             dateIndex = findParamIndex(words, "/by");
-        } catch (ClovisException.ArgumentValueMissing e) {
-            throw new ClovisException.MissingDeadlineArgument();
+        } catch (ArgumentValueMissing e) {
+            throw new MissingDeadlineArgument();
         }
         String description = assembleStr(words,1,dateIndex);
         String deadlineTime = assembleStr(words,dateIndex+1);
         return new Deadline(description,deadlineTime);
     }
 
-    public static Event parseEvent(String[] words) throws ClovisException.MissingEventArguments {
+    public static Event parseEvent(String[] words) throws MissingEventArguments {
         int fromIndex;
         int toIndex;
         try {
             fromIndex = findParamIndex(words, "/from");
             toIndex = findParamIndex(words, "/to");
-        } catch (ClovisException.ArgumentValueMissing e) {
-            throw new ClovisException.MissingEventArguments();
+        } catch (ArgumentValueMissing e) {
+            throw new MissingEventArguments();
         }
         String description = assembleStr(words, 1, fromIndex);
         String startTime = assembleStr(words, fromIndex + 1, toIndex);
@@ -84,13 +82,15 @@ public class Parser {
         return Integer.parseInt(words[1]) - 1;
     }
 
-    public static void checkForArgs(String[] words) throws ClovisException.MissingArgument {
+    public static void checkForArgs(String[] words) throws MissingArgument {
         if (words.length == 1) {
-            throw new ClovisException.MissingArgument();
+            throw new MissingArgument();
         }
     }
 
-    public void switchCase(String cmd, String[] words) throws IOException {
+    public void switchCase(String cmd, String[] words) throws ArgumentValueMissing, InvalidInput,
+            TaskAlreadyMarkedCorrectly, MissingArgument, NoActiveTasks, MissingDeadlineArgument,
+            MissingEventArguments, TargetIndexOutOfRange, IOException, DataDirCouldNotBeMade, KeywordNotFound {
         switch (cmd) {
         case "list":
             handleList();
@@ -128,11 +128,12 @@ public class Parser {
             handleFindKeyword(words);
             break;
         default:
-                throw new ClovisException.InvalidInput();
+            throw new InvalidInput();
         }
     }
 
-    private void handleUnmarking(String[] words) {
+    private void handleUnmarking(String[] words) throws MissingArgument, NoActiveTasks,
+            TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange {
         Parser.checkForArgs(words);
         tasks.checkForAnyTasks();
         int unmarkIndex = Parser.getTargetIndex(words);
@@ -140,7 +141,8 @@ public class Parser {
         ui.printUnmarkAck(unmarkIndex, tasks.get(unmarkIndex));
     }
 
-    private void handleMarking(String[] words) {
+    private void handleMarking(String[] words) throws MissingArgument, NoActiveTasks,
+            TargetIndexOutOfRange, TaskAlreadyMarkedCorrectly {
         Parser.checkForArgs(words);
         tasks.checkForAnyTasks();
         int markIndex = Parser.getTargetIndex(words);
@@ -148,7 +150,7 @@ public class Parser {
         ui.printMarkAck(markIndex,tasks.get(markIndex));
     }
 
-    private void handleDeletion(String[] words) {
+    private void handleDeletion(String[] words) throws MissingArgument, TargetIndexOutOfRange, NoActiveTasks {
         Parser.checkForArgs(words);
         tasks.checkForAnyTasks();
         int delIndex = Integer.parseInt(words[1]) - 1;
@@ -157,7 +159,7 @@ public class Parser {
         ui.printTaskDeletion(deletedTaskStr, delIndex, tasks.size());
     }
 
-    private void handleSaving() throws IOException {
+    private void handleSaving() throws IOException, NoActiveTasks, DataDirCouldNotBeMade {
         tasks.checkForAnyTasks();
         ui.printSaving();
         storage.createDataDir();
@@ -165,30 +167,30 @@ public class Parser {
         ui.printSavedTasks();
     }
 
-    private void handleEvent(String[] words) {
+    private void handleEvent(String[] words) throws MissingArgument, MissingEventArguments, NoActiveTasks {
         Parser.checkForArgs(words);
         tasks.add(Parser.parseEvent(words));
         ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
     }
 
-    private void handleDeadline(String[] words) {
+    private void handleDeadline(String[] words) throws MissingArgument, MissingDeadlineArgument, NoActiveTasks {
         Parser.checkForArgs(words);
         tasks.add(Parser.parseDeadline(words));
         ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
     }
 
-    private void handleTodo(String[] words) {
+    private void handleTodo(String[] words) throws MissingArgument, NoActiveTasks {
         Parser.checkForArgs(words);
         tasks.add(Parser.parseTodo(words));
         ui.printTaskCreation(tasks.getLatestTask(), tasks.size());
     }
 
-    private void handleList() {
+    private void handleList() throws NoActiveTasks {
         tasks.checkForAnyTasks();
         ui.printTasks(tasks.getAllTasks());
     }
 
-    private void handleFindKeyword(String[] words) {
+    private void handleFindKeyword(String[] words) throws MissingArgument, KeywordNotFound {
         Parser.checkForArgs(words);
         ui.printTasks(tasks.find(words[1]));
     }

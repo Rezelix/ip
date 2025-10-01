@@ -1,7 +1,7 @@
 package clovis;
 
-import clovis.Exceptions.ClovisException;
 import clovis.task.Task;
+import clovis.Exceptions.NoActiveTasks;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -50,16 +50,16 @@ public class Ui {
         System.out.println("Successfully saved all Tasks");
     }
 
-    public static void printTotalInList(int numOfTasks) throws ClovisException.NoActiveTasks {
+    public static void printTotalInList(int numOfTasks) throws NoActiveTasks {
         System.out.println("You currently have " + numOfTasks + " tasks in your list");
     }
 
-    public static void printTaskCreation(Task task,int taskIndex) {
+    public static void printTaskCreation(Task task,int taskIndex) throws NoActiveTasks {
         printAck(task.toString());
         printTotalInList(taskIndex);
     }
 
-    public static void printTaskDeletion(String deletedTask,int delIndex, int tasksIndex) {
+    public static void printTaskDeletion(String deletedTask,int delIndex, int tasksIndex) throws NoActiveTasks {
         printDelAck(delIndex,deletedTask);
         printTotalInList(tasksIndex);
     }
@@ -94,5 +94,9 @@ public class Ui {
 
     public void printDeleteAll() {
         System.out.println("Deleted all Tasks");
+    }
+
+    public void printBye() {
+        System.out.println("Bye. Don't come again!");
     }
 }
