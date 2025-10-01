@@ -17,11 +17,24 @@ public class Storage {
     private final String filepath;
     private Ui ui;
 
+    /**
+     * Constructs a Storage object that is used to call methods referencing
+     * any memory-related methods. The object is provided a filepath by the
+     * user to read from or write to.
+     * @param filepath
+     * @param ui
+     */
     public Storage(String filepath, Ui ui) {
         this.filepath = filepath;
         this.ui = ui;
     }
 
+    /**
+     * Creates a text file to the instantiated filepath and writes all the data
+     * of each task into the file.
+     * @param tasks
+     * @throws IOException
+     */
     public void save(ArrayList<Task> tasks) throws IOException {
         FileWriter fw = new FileWriter(this.filepath);
         for (Task task : tasks) {
@@ -30,6 +43,11 @@ public class Storage {
         fw.close();
     }
 
+    /**
+     * Creates a directory named "data" in the same directory the Clovis is in.
+     * This directory is required for the data text file
+     * @throws DataDirCouldNotBeMade
+     */
     public void createDataDir() throws DataDirCouldNotBeMade {
         File dir = new File("data");
         if (!dir.exists()) {
@@ -39,6 +57,10 @@ public class Storage {
         }
     }
 
+    /**Loads tasks from disk to memory
+     * @return a mutable ArrayList of Task objects in the order they were in the instantiated filepath if it exists.
+     * @throws DataDirCouldNotBeMade
+     */
     public ArrayList<Task> load() throws DataDirCouldNotBeMade {
         File file = getFile();
         Scanner sc = null;
@@ -53,6 +75,14 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Helper function for load(). Receives each line of the text file containing Task object(s)
+     * data and parses the read data into the different parameters of
+     * either the Todo, Deadline or Event Object.
+     *
+     * @param sc
+     * @param tasks
+     */
     public static void arrayListConstructor(Scanner sc, ArrayList<Task> tasks) {
         String[] words;
         while (sc.hasNextLine()) {
@@ -73,6 +103,10 @@ public class Storage {
         }
     }
 
+    /**
+     * Returns a file object and creates one if one is not found in the instantiated filepath.
+     * @return a File object that is located at the instantiated file path the user had entered
+     */
     private File getFile() {
         File file = new File(this.filepath);
         if(!file.exists()) {
