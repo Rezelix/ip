@@ -24,10 +24,10 @@ public class Clovis {
         ui = new Ui();
         storage = new Storage(filePath, ui);
         tasks = new TaskList(storage.load());
-        parser = new Parser(ui,tasks,storage);
+        parser = new Parser(ui, tasks, storage);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         try {
             new Clovis("data/tasks.txt").run();
         } catch (FileNotFoundException | DataDirCouldNotBeMade e) {
@@ -35,10 +35,10 @@ public class Clovis {
         }
     }
 
-    public void run(){
+    public void run() {
         ui.printClovisIntro();
         String line = ui.readCommand();
-        while(!line.contains("bye")) {
+        while (!line.contains("bye")) {
             String[] words = Parser.splitWords(line, "\\s+");
             String cmd = words[0];
             try {
