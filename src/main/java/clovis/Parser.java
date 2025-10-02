@@ -111,7 +111,7 @@ public class Parser {
             handleDeletion(words);
             break;
         case "bye":
-            ui.printMessage("Bye. Don't come again!");
+            ui.printBye();
             System.exit(0);
             break;
         case "mark":
