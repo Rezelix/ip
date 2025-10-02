@@ -101,9 +101,9 @@ list
 **Expected output:**
 
 ```
-1. [T][ ] read book
-2. [D][ ] submit assignment (by: 15-10-2025)
-3. [E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
+1.[T][ ] read book
+2.[D][ ] submit assignment (by: 15-10-2025)
+3.[E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
 ```
 
 ---
@@ -128,7 +128,7 @@ mark 1
 
 ```
 Marked Task 1 successfully!
-  [T][X] read book
+[T][X] read book
 ```
 
 ---
@@ -153,7 +153,7 @@ unmark 1
 
 ```
 Unmarked Task 1 successfully!
-  [T][ ] read book
+[T][ ] read book
 ```
 
 ---
@@ -189,7 +189,7 @@ Searches for tasks containing the given keyword(s).
 **Format:**
 
 ```
-find KEYWORD [MORE_KEYWORDS]
+find KEYWORD
 ```
 
 **Examples:**
@@ -201,7 +201,7 @@ find project
 **Expected output:**
 
 ```
-1. [E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
+1.[E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
 ```
 
 ---
