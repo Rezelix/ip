@@ -19,23 +19,21 @@ Adds a task without any date or time.
 
 **Format:**
 
-```bash
+```
 todo DESCRIPTION
 ```
 
 **Examples:**
 
-```bash
+```
 todo read book
-todo buy groceries
 ```
 
 **Expected output:**
 
-```text
-Got it. I've added this task:
-  [T][ ] read book
-Now you have 1 task in the list.
+```
+added: [T][ ] read book
+You currently have 2 tasks in your list
 ```
 
 ---
@@ -46,22 +44,21 @@ Adds a task with a due date.
 
 **Format:**
 
-```bash
+```
 deadline DESCRIPTION /by dd-mm-yyyy
 ```
 
 **Example:**
 
-```bash
+```
 deadline submit assignment /by 15-10-2025
 ```
 
 **Expected output:**
 
-```text
-Got it. I've added this task:
-  [D][ ] submit assignment (by: 15-10-2025)
-Now you have 2 tasks in the list.
+```
+added: [D][ ] submit assignment (by: 15-10-2025)
+You currently have 2 tasks in your list
 ```
 
 ---
@@ -72,22 +69,21 @@ Adds a task that happens at a specific date/time.
 
 **Format:**
 
-```bash
+```
 event DESCRIPTION /from START_DATE_OR_TIME /to END_DATE_OR_TIME
 ```
 
 **Example:**
 
-```bash
+```
 event project meeting /from 20-10-2025 14:00 to: 21-10-2025 14:00
 ```
 
 **Expected output:**
 
-```text
-Got it. I've added this task:
-  [E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
-Now you have 3 tasks in the list.
+```
+added: [E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
+You currently have 3 tasks in your list
 ```
 
 ---
@@ -98,14 +94,13 @@ Displays all tasks currently stored.
 
 **Format:**
 
-```bash
+```
 list
 ```
 
 **Expected output:**
 
-```text
-Here are the tasks in your list:
+```
 1. [T][ ] read book
 2. [D][ ] submit assignment (by: 15-10-2025)
 3. [E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
@@ -119,20 +114,20 @@ Marks a task as done.
 
 **Format:**
 
-```bash
+```
 mark INDEX
 ```
 
 **Example:**
 
-```bash
+```
 mark 1
 ```
 
 **Expected output:**
 
-```text
-Nice! I've marked this task as done:
+```
+Marked Task 1 successfully!
   [T][X] read book
 ```
 
@@ -144,20 +139,20 @@ Marks a completed task as not done.
 
 **Format:**
 
-```bash
+```
 unmark INDEX
 ```
 
 **Example:**
 
-```bash
+```
 unmark 1
 ```
 
 **Expected output:**
 
-```text
-OK, I've marked this task as not done yet:
+```
+Unmarked Task 1 successfully!
   [T][ ] read book
 ```
 
@@ -181,9 +176,8 @@ delete 2
 **Expected output:**
 
 ```
-Noted. I've removed this task:
-  [D][ ] submit assignment (by: 15-10-2025)
-Now you have 2 tasks in the list.
+Deleted the task: 2.[D][ ] submit assignment (by: 15-10-2025)
+You currently have 2 tasks in your list
 ```
 
 ---
@@ -202,13 +196,11 @@ find KEYWORD [MORE_KEYWORDS]
 
 ```
 find project
-find assignment submit
 ```
 
 **Expected output:**
 
 ```
-Here are the matching tasks in your list:
 1. [E][ ] project meeting (from: 20-10-2025 14:00 to: 21-10-2025 14:00)
 ```
 
@@ -244,15 +236,24 @@ Bye. Don't come again!
 
 ---
 
-## Saving the data
+## Saving the data : `save`
 
-Clovis saves automatically after every command that modifies tasks.
-No manual save command is required.
+Saves all tasks into a text file.
 
+**Format:**
+
+```
+save
+```
+
+**Expected output:**
+
+```
+Saving tasks to file...
+Successfully saved all Tasks
+```
 * Data is stored in a file under the `/data` folder (e.g., `data/tasks.txt`).
 * If the file is corrupted or deleted, Clovis will start with an empty task list.
-
-**Caution:** Always back up the file before editing it manually.
 
 ---
 
@@ -271,5 +272,5 @@ No manual save command is required.
 | **Delete All**   | `deleteAll`                                                                                                                                    |
 | **Help**         | `help`                                                                                                                                         |
 | **Exit**         | `bye`                                                                                                                                          |
-
+| **Save**         | `save`                                                                                                                                          |
 ---
