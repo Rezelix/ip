@@ -34,6 +34,12 @@ public class Event extends Task{
         return this.getStatus() + this.getName() + " (from: " + this.getStartDateTime()
                 + " to: " + this.getEndDateTime() + ")";
     }
+    /**
+     * Returns a string that contains all the Task Object's data that is used to save to a text document.
+     * Loading from the document to individual parameters later will be easy if the separator
+     * of each parameter can be defined. In this case, the separator is '|'
+     * @return A String containing all details of the Task Object with a defined separator
+     */
     @Override
     public String toExportString() {
         return this.getTypeAbbrev() + "|" + (this.isDone() ? 1 : 0) + "|" + this.getName()
