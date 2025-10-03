@@ -86,7 +86,7 @@ public class Parser {
      *
      * @param array
      * @param startIndex
-     * @return
+     * @return String Object after merging Strings from multiple indexes in a String array
      */
     public static String assembleStr(String[] array, int startIndex) throws MissingArgument {
         String output = "";
