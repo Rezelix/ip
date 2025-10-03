@@ -1,15 +1,6 @@
 package clovis;
 
-import clovis.exceptions.ArgumentValueMissing;
-import clovis.exceptions.DataDirCouldNotBeMade;
-import clovis.exceptions.InvalidInput;
-import clovis.exceptions.KeywordNotFound;
-import clovis.exceptions.MissingArgument;
-import clovis.exceptions.MissingDeadlineArgument;
-import clovis.exceptions.MissingEventArguments;
-import clovis.exceptions.NoActiveTasks;
-import clovis.exceptions.TargetIndexOutOfRange;
-import clovis.exceptions.TaskAlreadyMarkedCorrectly;
+import clovis.exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,6 +14,7 @@ public class Clovis {
     public Clovis(String filePath) throws FileNotFoundException, DataDirCouldNotBeMade {
         ui = new Ui();
         storage = new Storage(filePath, ui);
+        storage.createDataDir();
         tasks = new TaskList(storage.load());
         parser = new Parser(ui, tasks, storage);
     }
@@ -46,7 +38,7 @@ public class Clovis {
                 ui.printDivider();
             } catch (ArgumentValueMissing | InvalidInput | TaskAlreadyMarkedCorrectly | MissingArgument |
                      NoActiveTasks | MissingDeadlineArgument | MissingEventArguments | TargetIndexOutOfRange |
-                     DataDirCouldNotBeMade | KeywordNotFound | IOException e) {
+                     DataDirCouldNotBeMade | KeywordNotFound | IOException | WrongArgumentFormat e) {
                 ui.printError(e.getMessage());
                 ui.printDivider();
             }

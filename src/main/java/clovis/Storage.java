@@ -21,6 +21,7 @@ public class Storage {
      * Constructs a Storage object that is used to call methods referencing
      * any memory-related methods. The object is provided a filepath by the
      * user to read from or write to.
+     *
      * @param filepath
      * @param ui
      */
@@ -32,11 +33,12 @@ public class Storage {
     /**
      * Creates a text file to the instantiated filepath and writes all the data
      * of each task into the file.
+     *
      * @param tasks
      * @throws IOException
      */
     public void save(ArrayList<Task> tasks) throws IOException {
-        FileWriter fw = new FileWriter(this.filepath);
+        FileWriter fw = new FileWriter(this.filepath,false);
         for (Task task : tasks) {
             fw.write(task.toExportString() + System.lineSeparator());
         }
@@ -46,6 +48,7 @@ public class Storage {
     /**
      * Creates a directory named "data" in the same directory the Clovis is in.
      * This directory is required for the data text file
+     *
      * @throws DataDirCouldNotBeMade
      */
     public void createDataDir() throws DataDirCouldNotBeMade {
@@ -57,7 +60,9 @@ public class Storage {
         }
     }
 
-    /**Loads tasks from disk to memory
+    /**
+     * Loads tasks from disk to memory
+     *
      * @return a mutable ArrayList of Task objects in the order they were in the instantiated filepath if it exists.
      * @throws DataDirCouldNotBeMade
      */
@@ -86,30 +91,34 @@ public class Storage {
     public static void arrayListConstructor(Scanner sc, ArrayList<Task> tasks) {
         String[] words;
         while (sc.hasNextLine()) {
-             words = sc.nextLine().trim().split("\\|");
-             boolean taskIsDone = Boolean.parseBoolean(words[1]);
-             String taskName = words[2];
-             switch (words[0]) {
-             case "T":
-                 tasks.add(new Todo(taskName,taskIsDone));
-                 break;
-             case "D":
-                 tasks.add(new Deadline(taskName,taskIsDone,words[3]));
-                 break;
-             case "E":
-                 tasks.add(new Event(taskName,taskIsDone,words[3],words[4]));
-                 break;
-             }
+            words = sc.nextLine().trim().split("\\|");
+            boolean taskIsDone = (words[1].equals("1"));
+            String taskName = words[2];
+            switch (words[0]) {
+            case "T":
+                tasks.add(new Todo(taskName, taskIsDone));
+                break;
+            case "D":
+                String deadline = words[3];
+                tasks.add(new Deadline(taskName, taskIsDone, deadline));
+                break;
+            case "E":
+                String eventStart = words[3];
+                String eventEnd = words[4];
+                tasks.add(new Event(taskName, taskIsDone, eventStart, eventEnd));
+                break;
+            }
         }
     }
 
     /**
      * Returns a file object and creates one if one is not found in the instantiated filepath.
+     *
      * @return a File object that is located at the instantiated file path the user had entered
      */
     private File getFile() {
         File file = new File(this.filepath);
-        if(!file.exists()) {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException | SecurityException e) {
