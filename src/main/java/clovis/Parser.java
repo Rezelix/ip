@@ -1,6 +1,17 @@
 package clovis;
 
-import clovis.exceptions.*;
+import clovis.exceptions.ArgumentValueMissing;
+import clovis.exceptions.DataDirCouldNotBeMade;
+import clovis.exceptions.InvalidInput;
+import clovis.exceptions.KeywordNotFound;
+import clovis.exceptions.MissingArgument;
+import clovis.exceptions.MissingDeadlineArgument;
+import clovis.exceptions.MissingEventArguments;
+import clovis.exceptions.NoActiveTasks;
+import clovis.exceptions.TargetIndexOutOfRange;
+import clovis.exceptions.TaskAlreadyMarkedCorrectly;
+import clovis.exceptions.WrongArgumentFormat;
+
 import clovis.task.Deadline;
 import clovis.task.Event;
 import clovis.task.Todo;
@@ -38,7 +49,7 @@ public class Parser {
      * @param words
      * @param keyword
      * @return index of keyword within String Array
-     * @throws ArgumentValueMissing
+     * @throws ArgumentValueMissing If the user-specified target keyword/index is missing in the String.
      */
     public static int findParamIndex(String[] words, String keyword) throws ArgumentValueMissing {
         for (int i = 1; i < words.length; i++) {
@@ -77,12 +88,15 @@ public class Parser {
      * @param startIndex
      * @return
      */
-    public static String assembleStr(String[] array, int startIndex) {
+    public static String assembleStr(String[] array, int startIndex) throws MissingArgument {
         String output = "";
         for (int i = startIndex; i < array.length; i++) {
             output += array[i] + " ";
         }
         output = output.trim();
+        if (output.equals("")) {
+            throw new MissingArgument();
+        }
         return output;
     }
 
@@ -90,9 +104,9 @@ public class Parser {
      * Instantiates a Todo object, which is a task with only a description.
      *
      * @param words
-     * @return
+     * @return Todo object, which is a task with only a description.
      */
-    public static Todo parseTodo(String[] words) {
+    public static Todo parseTodo(String[] words) throws MissingArgument {
         return new Todo(assembleStr(words, 1));
     }
 
@@ -101,10 +115,10 @@ public class Parser {
      * The MissingDeadlineArgument is thrown if there is no deadline parameter input by the user.
      *
      * @param words
-     * @return
-     * @throws MissingDeadlineArgument
+     * @return Deadline Task Object, with a description string and a by date/time
+     * @throws MissingDeadlineArgument If missing deadline argument in task creation.
      */
-    public static Deadline parseDeadline(String[] words) throws MissingDeadlineArgument {
+    public static Deadline parseDeadline(String[] words) throws MissingDeadlineArgument, MissingArgument {
         int dateIndex;
         try {
             dateIndex = findParamIndex(words, "/by");
@@ -118,13 +132,12 @@ public class Parser {
 
     /**
      * Instantiates an Event object, which is a task with a description, a starting date and an ending date.
-     * The MissingEventArguments is thrown if there is one or more parameters the user has not entered for the dates.
      *
      * @param words
-     * @return
-     * @throws MissingEventArguments
+     * @return Event Object containing a description, a start date and to date
+     * @throws MissingEventArguments If missing either from or to date in event task creation.
      */
-    public static Event parseEvent(String[] words) throws MissingEventArguments {
+    public static Event parseEvent(String[] words) throws MissingEventArguments, MissingArgument {
         int fromIndex;
         int toIndex;
         try {
@@ -144,19 +157,24 @@ public class Parser {
      * Usually used for task deletion, where a user will pick a task to delete if they wish to.
      *
      * @param words
-     * @return
+     * @return index of targeted task
      */
-    public static int getTargetIndex(String[] words) {
-        return Integer.parseInt(words[1]) - 1;
+    public static int getTargetIndex(String[] words) throws WrongArgumentFormat {
+        int result;
+        try {
+            result = Integer.parseInt(words[1]) - 1;
+        } catch (NumberFormatException e) {
+            throw new WrongArgumentFormat();
+        }
+        return result;
     }
 
     /**
      * Checks if there are missing arguments in the user's entry.
      * Used early within user command where an additional parameter is required.
-     * By throwing MissingArgument where they are missing arguments prevent unnecessary function calls
      *
      * @param words
-     * @throws MissingArgument
+     * @throws MissingArgument If the user did not enter an argument for the command they tried to do.
      */
     public static void checkForArgs(String[] words) throws MissingArgument {
         if (words.length == 1) {
@@ -179,9 +197,12 @@ public class Parser {
      * @throws TargetIndexOutOfRange      If the user-specified target index is out of range in the ArrayList.
      * @throws IOException                If a file could not be read or written to.
      * @throws DataDirCouldNotBeMade      If the data directory could not be made.
-     * @throws KeywordNotFound            If the user specified keyword cannot be found in any of the Task objects in the ArrayList.
+     * @throws KeywordNotFound            If the user specified keyword cannot be found in any of the objects in the ArrayList.
      */
-    public void switchCase(String cmd, String[] words) throws ArgumentValueMissing, InvalidInput, TaskAlreadyMarkedCorrectly, MissingArgument, NoActiveTasks, MissingDeadlineArgument, MissingEventArguments, TargetIndexOutOfRange, IOException, DataDirCouldNotBeMade, KeywordNotFound {
+    public void switchCase(String cmd, String[] words) throws ArgumentValueMissing, InvalidInput,
+            TaskAlreadyMarkedCorrectly, MissingArgument, NoActiveTasks, MissingDeadlineArgument,
+            MissingEventArguments, TargetIndexOutOfRange, IOException, DataDirCouldNotBeMade,
+            KeywordNotFound, WrongArgumentFormat {
         switch (cmd) {
         case "list":
             handleList();
@@ -225,13 +246,14 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to unmarking a task
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws NoActiveTasks
-     * @throws TaskAlreadyMarkedCorrectly
-     * @throws TargetIndexOutOfRange
+     * @throws MissingArgument            If the user did not enter an argument for the command they tried to do.
+     * @throws NoActiveTasks              If reading or writing to task objects when they are none activated.
+     * @throws TaskAlreadyMarkedCorrectly If the user tries to mark a task that is already marked.
+     * @throws TargetIndexOutOfRange      If the user-specified target index is out of range in the ArrayList.
      */
-    private void handleUnmarking(String[] words) throws MissingArgument, NoActiveTasks, TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange {
+    private void handleUnmarking(String[] words) throws MissingArgument, NoActiveTasks, TaskAlreadyMarkedCorrectly, TargetIndexOutOfRange, WrongArgumentFormat {
         Parser.checkForArgs(words);
         tasks.checkForAnyTasks();
         int unmarkIndex = Parser.getTargetIndex(words);
@@ -241,13 +263,14 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to mark a task
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws NoActiveTasks
-     * @throws TargetIndexOutOfRange
-     * @throws TaskAlreadyMarkedCorrectly
+     * @throws MissingArgument            If the user did not enter an argument for the command they tried to do.
+     * @throws NoActiveTasks              If reading or writing to task objects when they are none activated.
+     * @throws TargetIndexOutOfRange      If the user-specified target index is out of range in the ArrayList.
+     * @throws TaskAlreadyMarkedCorrectly If the user tries to mark a task that is already marked.
      */
-    private void handleMarking(String[] words) throws MissingArgument, NoActiveTasks, TargetIndexOutOfRange, TaskAlreadyMarkedCorrectly {
+    private void handleMarking(String[] words) throws MissingArgument, NoActiveTasks, TargetIndexOutOfRange, TaskAlreadyMarkedCorrectly, WrongArgumentFormat {
         Parser.checkForArgs(words);
         tasks.checkForAnyTasks();
         int markIndex = Parser.getTargetIndex(words);
@@ -257,15 +280,16 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to delete a task
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws TargetIndexOutOfRange
-     * @throws NoActiveTasks
+     * @throws MissingArgument       If the user did not enter an argument for the command they tried to do.
+     * @throws TargetIndexOutOfRange If the user-specified target index is out of range in the ArrayList.
+     * @throws NoActiveTasks         If reading or writing to task objects when they are none activated.
      */
-    private void handleDeletion(String[] words) throws MissingArgument, TargetIndexOutOfRange, NoActiveTasks {
+    private void handleDeletion(String[] words) throws MissingArgument, TargetIndexOutOfRange, NoActiveTasks, WrongArgumentFormat {
         Parser.checkForArgs(words);
         tasks.checkForAnyTasks();
-        int delIndex = Integer.parseInt(words[1]) - 1;
+        int delIndex = getTargetIndex(words);
         String deletedTaskStr = tasks.get(delIndex).toString();
         tasks.delete(delIndex);
         ui.printTaskDeletion(deletedTaskStr, delIndex, tasks.size());
@@ -273,9 +297,10 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to save tasks
+     *
      * @throws IOException
-     * @throws NoActiveTasks
-     * @throws DataDirCouldNotBeMade
+     * @throws NoActiveTasks         If reading or writing to task objects when they are none activated.
+     * @throws DataDirCouldNotBeMade If the data directory could not be made.
      */
     private void handleSaving() throws IOException, NoActiveTasks, DataDirCouldNotBeMade {
         tasks.checkForAnyTasks();
@@ -287,10 +312,11 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to create an Event Task Object
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws MissingEventArguments
-     * @throws NoActiveTasks
+     * @throws MissingArgument       If the user did not enter an argument for the command they tried to do.
+     * @throws MissingEventArguments If missing either from or to date in event task creation.
+     * @throws NoActiveTasks         If reading or writing to task objects when they are none activated.
      */
     private void handleEvent(String[] words) throws MissingArgument, MissingEventArguments, NoActiveTasks {
         Parser.checkForArgs(words);
@@ -300,10 +326,11 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to create a Deadline Task Object
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws MissingDeadlineArgument
-     * @throws NoActiveTasks
+     * @throws MissingArgument         If the user did not enter an argument
+     * @throws MissingDeadlineArgument If missing deadline argument in task creation.
+     * @throws NoActiveTasks           If reading or writing to task objects when they are none activated.
      */
     private void handleDeadline(String[] words) throws MissingArgument, MissingDeadlineArgument, NoActiveTasks {
         Parser.checkForArgs(words);
@@ -313,9 +340,10 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to create a Todo Task Object
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws NoActiveTasks
+     * @throws MissingArgument If the user did not enter an argument
+     * @throws NoActiveTasks   If reading or writing to task objects when they are none activated.
      */
     private void handleTodo(String[] words) throws MissingArgument, NoActiveTasks {
         Parser.checkForArgs(words);
@@ -325,6 +353,7 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to list all the active tasks
+     *
      * @throws NoActiveTasks If there are no task active
      */
     private void handleList() throws NoActiveTasks {
@@ -334,9 +363,10 @@ public class Parser {
 
     /**
      * Calls methods from multiple classes to execute to find Tasks containing a user-specified keyword
+     *
      * @param words
-     * @throws MissingArgument
-     * @throws KeywordNotFound
+     * @throws MissingArgument If user didn't add a keyword to search for
+     * @throws KeywordNotFound If the keyword could not be found
      */
     private void handleFindKeyword(String[] words) throws MissingArgument, KeywordNotFound {
         Parser.checkForArgs(words);
