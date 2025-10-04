@@ -272,5 +272,5 @@ Successfully saved all Tasks
 | **Delete All**   | `deleteAll`                                                                                                                                    |
 | **Help**         | `help`                                                                                                                                         |
 | **Exit**         | `bye`                                                                                                                                          |
-| **Save**         | `save`                                                                                                                                          |
+| **Save**         | `save`                                                                                                                                         |
 ---
