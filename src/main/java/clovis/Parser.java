@@ -70,12 +70,15 @@ public class Parser {
      * @param endIndex
      * @return
      */
-    public static String assembleStr(String[] array, int startIndex, int endIndex) {
+    public static String assembleStr(String[] array, int startIndex, int endIndex) throws MissingArgument {
         String output = "";
         for (int i = startIndex; i < endIndex; i++) {
             output += array[i] + " ";
         }
         output = output.trim();
+        if (output.equals("")) {
+            throw new MissingArgument();
+        }
         return output;
     }
 
