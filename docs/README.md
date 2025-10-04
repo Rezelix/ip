@@ -1,16 +1,10 @@
 # Clovis User Guide
 
-// Product screenshot goes here
-```
-  _____ _            _
- / ____| |          (_)
-| |    | | _____   ___ ___
-| |    | |/ _ \ \ / / / __|
-| |____| | (_) \ V /| \__ \
- \_____|_|\___/ \_/ |_|___/
- What do you want from me this time?
-__________________________________________________________
-```
+
+![Clovis](./assets/ClovisImage.png)
+
+Clovis is a task tracker chatbot that can keeps track of tasks(todos, deadlines and events) via commands sent by the user through a Command Line Interface (CLI)
+
 ---
 
 ## Adding a todo : `todo`
@@ -273,4 +267,5 @@ Successfully saved all Tasks
 | **Help**         | `help`                                                                                                                                         |
 | **Exit**         | `bye`                                                                                                                                          |
 | **Save**         | `save`                                                                                                                                         |
+
 ---
